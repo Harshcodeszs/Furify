@@ -1,0 +1,667 @@
+/* ==========================================================
+   pages/home.css — hero, tips, how-it-works, CTA
+   ========================================================== */
+
+/* ==================== HERO ==================== */
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 420px;
+  overflow: hidden;
+  color: var(--white);
+}
+
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.1) 70%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 48px 8vw;
+  display: grid;
+  grid-template-columns: minmax(0, 560px) 1fr; /* text left, button right */
+  column-gap: 40px;
+  align-items: start;
+}
+
+/* Everything except the button stays in the left column */
+.hero-content > h1,
+.hero-content > p {
+  grid-column: 1;
+}
+
+.hero-content h1 {
+  margin-bottom: 14px;
+  font-size: 2rem;
+  font-weight: 600;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.hero-content p {
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.hero-content p:nth-of-type(3) {
+  font-weight: 600;
+}
+
+.hero-content > .btn {
+  grid-column: 2;
+  grid-row: 1 / span 4;
+  align-self: center;
+  justify-self: center;
+  margin-top: -30;
+}
+
+/* Small tagline directly under the button (the <p> right after it) */
+.hero-content > .hero-note {
+  grid-column: 2;
+  grid-row: 5;
+  align-self: start;
+  justify-self: center;
+  font-family: 'Bellota Text', sans-serif;
+  margin: -80px 0 0;
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-align: center;
+}
+
+/* ==================== TIPS ==================== */
+.tips-section {
+  padding: 56px 0 64px;
+  background: var(--white);
+}
+
+.tips-header {
+  text-align: center;
+  margin-bottom: 56px;          /* space between header and content */
+}
+
+.tips-header h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.tips-header p {
+  max-width: none;
+  font-size: 0.85rem;
+  color: #333;
+}
+
+/* Two columns: [cards + disclaimer] | [photo] */
+.tips-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 32px;
+  align-items: stretch;         /* photo matches the full height of the left column */
+}
+
+.tips-left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* 3 x 2 cards */
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px 20px;
+}
+
+.tip-card {
+  min-height: 110px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: #b09a86;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tip-card h3 {
+  display: flex;                /* ready for an icon next to the title */
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111;
+}
+
+.tip-card p {
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: #222;
+}
+
+/* Grey disclaimer under the cards */
+.tips-notice {
+  padding: 16px 28px;
+  border-radius: 14px;
+  background: #d4d4d4;
+  text-align: center;
+}
+
+.tips-notice p {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: #444;
+  margin: 0;
+}
+
+/* Photo: full height of the left column */
+.tips-image {
+  position: relative;
+  min-height: 320px;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+}
+
+.tips-image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tips-image .caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 32px 16px 14px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  color: #fff;
+  font-size: 0.75rem;
+  text-align: center;
+}
+/* ==================== HOW IT WORKS ==================== */
+.how-it-works {
+  padding: 56px 0 64px;
+  background: var(--tan);
+  color: var(--white);
+}
+
+.how-it-works .section-subtitle {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.how-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 48px;
+  align-items: center;
+  margin-top: 36px;
+}
+
+.steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.step-icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--white);
+}
+
+/* Replace the number with an <img> inside .step-icon later if you add icons */
+.step-item:nth-child(1) .step-icon { background: #e53935; }
+.step-item:nth-child(2) .step-icon { background: #d9c34a; color: var(--ink); }
+.step-item:nth-child(3) .step-icon { background: #3fbfb2; }
+.step-item:nth-child(4) .step-icon { background: var(--ink); }
+
+.step-text h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+.step-text p {
+  margin-top: 2px;
+  font-size: 0.85rem;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+.how-image {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  height: 450px;
+}
+
+.how-image > img {
+  width: 100%;
+  height: 100%;
+  min-height: 150px;
+  object-fit: cover;
+}
+
+.how-image-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 40px 16px 14px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+}
+
+.how-image-overlay h4 {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.how-image-overlay p {
+  margin-top: 4px;
+  font-size: 0.65rem;
+  line-height: 1.4;
+}
+
+/* ==================== CTA ==================== */
+.cta-section {
+  padding: 40px 0 56px;
+  background: var(--white);
+}
+
+.cta-card {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 36px 32px 28px;
+  border-radius: var(--radius-lg);
+  background: var(--tan);
+  color: var(--white);
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.cta-card h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.cta-card > p {
+  max-width: 420px;
+  margin: 6px auto 0;
+  font-size: 0.85rem;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.cta-card .btn {
+  margin: 20px 0 18px;
+  padding: 14px 40px;
+  font-size: 1rem;
+}
+
+.cta-card .cta-note {
+  max-width: none;
+  font-size: 0.7rem;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 960px) {
+  .tips-layout,
+  .how-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .tips-image {
+    max-width: 360px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero {
+    min-height: 460px;
+  }
+
+  .hero-content {
+    padding: 40px 20px;
+    grid-template-columns: 1fr;
+  }
+
+  .hero-content > .btn,
+  .hero-content > .hero-note {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+    text-align: left;
+  }
+
+  .hero-content h1 {
+    font-size: 1.6rem;
+  }
+
+  .tips-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cta-card h2 {
+    font-size: 1.35rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .tips-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ==========================================================
+   Home page effects: dog section, backgrounds, scroll feel,
+   bulldog + magnifier, paw trail, scroll hints
+   (moved here from the <style> block that was inside index.html;
+   kept at the END of this file so it overrides the rules above, as before)
+   NOTE: image paths in this part are relative to css/pages/ (../../assets/...)
+   ========================================================== */
+/* ==========================================================
+   Home page effects (dog section, backgrounds, scroll feel)
+   ========================================================== */
+:root {
+  --fur-bg: url("../../assets/image/furwhite.jpg");
+  /* fonts of the big title + subtitle (same as your design) */
+  --stage-title-font: "Archivo Black", "Arial Black", Arial, sans-serif;
+  --stage-sub-font: "Times New Roman", Times, serif;
+  --page-h: calc(100vh - var(--nav-h, 64px));   /* one full screen below the navbar */
+}
+@supports (height: 100svh) {
+  :root { --page-h: calc(100svh - var(--nav-h, 64px)); }
+}
+
+/* ----- Page-like scrolling ----- */
+html { scroll-snap-type: y proximity; scroll-padding-top: var(--nav-h, 64px); }
+html.no-snap { scroll-snap-type: none; }
+.hero, .dog-stage, .tips-section, .how-it-works, .cta-section { scroll-snap-align: start; }
+
+/* The hero text drifts up and fades as you leave it */
+.hero-content {
+  transform: translateY(calc(var(--hp, 0) * -48px));
+  opacity: calc(1 - var(--hp, 0) * 0.9);
+}
+
+/* ----- Parts 2 and 3 share the fur background ----- */
+.dog-stage,
+.tips-section {
+  background: var(--fur-bg) center / cover no-repeat, #f4f1ec;
+}
+
+/* ----- Part 2: the dog section ----- */
+.dog-stage {
+  position: relative;
+  height: var(--page-h);
+  min-height: 520px;
+  overflow: hidden;
+}
+
+/* everything inside drifts up and fades as you scroll away */
+.stage-inner {
+  position: absolute;
+  inset: 0;
+  will-change: transform, opacity;
+  transform: translateY(calc(var(--p, 0) * -7%)) scale(calc(1 - var(--p, 0) * 0.05));
+  opacity: calc(1 - var(--p, 0) * 0.9);
+}
+
+.dog-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 5%;
+  height: min(83%, 44vw);
+  display: flex;
+  justify-content: center;
+  opacity: 0;                     /* hidden until the slide starts */
+  transform: translateX(-115vw);
+  will-change: transform, opacity, filter;
+}
+
+.dog {
+  height: 100%;
+  width: auto;
+  max-width: 92vw;
+  object-fit: contain;
+  transform-origin: 50% 90%;
+  will-change: transform;
+}
+
+.stage-copy {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 63%;
+  padding: 0 4vw;
+  text-align: center;
+  pointer-events: none;
+}
+
+.stage-title {
+  font-family: var(--stage-title-font);
+  font-size: clamp(1.5rem, 3.3vw, 3.4rem);
+  font-weight: 400;
+  line-height: 1.12;
+  color: #000;
+  perspective: 700px;
+  text-shadow: 0 0 18px rgba(255, 255, 255, 0.75);
+}
+
+.stage-title .word {
+  display: inline-block;
+  white-space: nowrap;
+  margin-right: 0.26em;
+}
+
+.stage-title .ch {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.7em) rotateX(-85deg) scale(0.9);
+  filter: blur(8px);
+  transition: opacity 0.6s ease, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), filter 0.7s ease;
+  transition-delay: calc(var(--i) * 26ms);
+}
+
+.stage-sub {
+  margin: 0.7em auto 0;
+  max-width: 92vw;
+  font-family: var(--stage-sub-font);
+  font-size: clamp(0.9rem, 1.55vw, 1.55rem);
+  line-height: 1.35;
+  color: #000;
+  opacity: 0;
+  transform: translateY(18px);
+  filter: blur(5px);
+  transition: opacity 0.9s ease 0.9s, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.9s, filter 0.9s ease 0.9s;
+}
+
+.dog-stage.is-in .ch { opacity: 1; transform: none; filter: none; }
+.dog-stage.is-in .stage-sub { opacity: 1; transform: none; filter: none; }
+
+/* "Scroll down" prompt: appears when the intro has finished */
+.scroll-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  font: 500 0.8rem var(--font, "Poppins", sans-serif);
+  color: #222;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  opacity: 0;
+  transform: translate(-50%, 12px);
+  pointer-events: none;
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.dog-stage.is-ready .scroll-hint {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+.scroll-hint svg { animation: hintBounce 1.5s ease-in-out infinite; }
+@keyframes hintBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(7px); } }
+
+/* ----- Slide-in for the tips, steps and call-to-action ----- */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(48px) scale(0.96);
+  transition: opacity 0.9s ease, transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--d, 0) * 90ms);
+}
+.js .tips-image.reveal { transform: translateX(64px) scale(0.96); }
+.js .reveal.in-view { opacity: 1; transform: none; }
+
+/* ----- Every part fills the screen, so the next one never peeks in ----- */
+.hero, .tips-section, .how-it-works { min-height: var(--page-h); }
+.tips-section, .how-it-works { display: flex; align-items: center; }
+.cta-section {
+  display: flex;
+  align-items: center;
+  /* the call-to-action + the footer together fill the last screen */
+  min-height: max(0px, calc(var(--page-h) - var(--footer-h, 0px)));
+}
+.how-image { height: min(450px, 52vh); }
+
+/* ----- Call-to-action entrance (card, then text, then the button pops) ----- */
+.js .cta-card.reveal { transform: translateY(70px) scale(0.94); filter: blur(6px); }
+.js .cta-card.reveal.in-view { transform: none; filter: none; }
+.js .cta-card .btn.reveal {
+  transform: translateY(20px) scale(0.7);
+  transition: opacity 0.7s ease, transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-delay: calc(var(--d, 0) * 90ms);
+}
+.js .cta-card .btn.reveal.in-view { transform: none; }
+
+@media (max-width: 700px) {
+  .dog-wrap { top: 6%; height: min(52%, 88vw); }
+  .stage-copy { top: 62%; }
+  .stage-title { font-size: clamp(1.3rem, 6vw, 2rem); }
+  .stage-sub { font-size: 0.85rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-snap-type: none; }
+  .js .reveal { opacity: 1; transform: none; transition: none; }
+  .stage-title .ch, .stage-sub { transition: none; }
+}
+/* ==========================================================
+   NEW: scroll fixes, part 4 (bulldog + magnifier), part 5 (paw trail)
+   ========================================================== */
+html { scroll-behavior: auto; overscroll-behavior-y: none; }   /* style.css "smooth" fought the JS glide */
+
+/* ----- Part 4: bulldog + magnifying glass ----- */
+.how-image {
+  height: clamp(280px, 52vh, 450px);
+  overflow: visible; border-radius: 0; box-shadow: none; background: none;
+}
+.how-dog-pos { position: absolute; top: 2%; left: 0; right: 0; height: 92%; display: flex; justify-content: center; }
+.how-dog-wrap { position: relative; height: 100%; }
+.how-dog, .how-zoom, .how-lens-img { max-width: none; }
+.how-dog { height: 100%; width: auto; }
+.how-lens { position: absolute; z-index: 2; pointer-events: none; }
+.how-lens-img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.how-glass { position: absolute; border-radius: 50%; overflow: hidden; }
+.how-zoom { position: absolute; }
+.how-glass::after {
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 26%, rgba(255,255,255,.4), transparent 34%),
+    radial-gradient(circle, transparent 60%, rgba(0,0,0,.22) 100%);
+}
+.how-image.lens-debug .how-glass { outline: 2px dashed red; }   /* add #lens-debug to the URL */
+
+/* the grey card the dog sits behind (reuses your .how-image-overlay) */
+.how-image-overlay.how-card {
+  z-index: 3; padding: 16px 20px 14px; border-radius: 20px;
+  background: rgba(217,217,217,.96); color: var(--ink);
+  box-shadow: 0 8px 18px rgba(0,0,0,.3);
+}
+.how-card h4 { font-size: .82rem; font-weight: 700; }
+.how-card p { margin-top: 4px; font-size: .66rem; line-height: 1.4; }
+.how-card .link-learn-more { margin-top: 6px; font-size: .66rem; color: var(--ink); text-decoration: underline; }
+
+.js .how-dog-wrap {
+  opacity: 0; transform: translateY(14%) scale(.94); filter: blur(14px);
+  transition: opacity 1s ease, transform 1.3s cubic-bezier(.22,1,.36,1), filter 1s ease;
+}
+.js .how-image.dog-in .how-dog-wrap { opacity: 1; transform: none; filter: none; }
+.js .how-lens {
+  opacity: 0; transform: translate(22%,-18%) rotate(18deg) scale(1.3); filter: blur(12px);
+  transition: opacity .9s ease, transform 1.2s cubic-bezier(.22,1,.36,1), filter .9s ease;
+}
+.js .how-image.lens-in .how-lens { opacity: 1; transform: none; filter: none; }
+
+/* ----- Part 5: paw prints walking across the background ----- */
+.cta-section { position: relative; overflow: hidden; }
+.cta-section > .container { position: relative; z-index: 1; }
+.paw-trail { position: absolute; inset: 0; pointer-events: none; }   /* no z-index: keeps multiply blending working */
+.paw {
+  position: absolute; left: var(--x); top: var(--y); max-width: none; height: auto;
+  mix-blend-mode: multiply;                                         /* white background disappears */
+  opacity: 0; transform: translate(-50%,-50%) rotate(var(--r)) scaleX(var(--s));
+}
+.paw-trail.walk .paw { animation: pawStep .6s cubic-bezier(.34,1.4,.64,1) both; animation-delay: var(--delay); }
+.paw-trail.walked .paw { opacity: .92; animation: none; }
+@keyframes pawStep {
+  from { opacity: 0;   filter: blur(6px); transform: translate(-50%,-50%) rotate(var(--r)) scaleX(var(--s)) scale(.4); }
+  to   { opacity: .92; filter: blur(0);   transform: translate(-50%,-50%) rotate(var(--r)) scaleX(var(--s)); }
+}
+
+/* "Scroll down" hint on parts 3 and 4 (same look + bounce as part 2) */
+.tips-section, .how-it-works { position: relative; }
+.tips-section .scroll-hint, .how-it-works .scroll-hint { bottom: 8px; z-index: 5; }
+.tips-section.is-ready .scroll-hint,
+.how-it-works.is-ready .scroll-hint { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+
+/* short laptop screens: tighten spacing so every part still fits */
+@media (max-height: 760px) {
+  .tips-section, .how-it-works { padding: 28px 0 56px; }
+  .tips-header { margin-bottom: 28px; }
+  .how-layout { margin-top: 20px; gap: 32px; }
+  .steps-list { gap: 14px; }
+}
+@media (max-width: 960px) { .how-image { max-width: 420px; width: 100%; margin: 0 auto; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .js .how-dog-wrap, .js .how-lens { opacity: 1; transform: none; filter: none; transition: none; }
+  .paw { opacity: .92; animation: none !important; }
+}
