@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Furify | Log in or Sign up</title>
+
+  <!-- Page-slide transitions: in <head>, NOT deferred -->
+  <script src="js/transitions.js"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Darumadrop+One&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/transitions.css">
+  <link rel="stylesheet" href="css/pages/login.css">
+</head>
+<body class="page-login">
+
+  <!--
+    The login / signup popup is built by js/auth.js and floats over
+    whatever page the user is on. This file is only a fallback for when
+    someone opens login.html directly: it shows the popup over an empty page.
+  -->
+
+  <!-- ==================== NAVBAR ==================== -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <a href="index.html" class="logo">
+        <span class="logo-name">Furi<span class="logo-fy">fy</span></span>
+        <span class="logo-tagline">Discover your pet's breed.</span>
+      </a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="identifyfur.html">Identify Fur</a></li>
+      <li><a href="history.html">History</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+
+    <div class="nav-auth">
+      <a href="login.html">Log in</a>
+      <span>|</span>
+      <a href="login.html?mode=signup">Sign up</a>
+    </div>
+  </nav>
+
+  <main style="min-height: 70vh;"></main>
+
+  <!-- Scripts -->
+  <script src="js/main.js" defer></script>
+  <script src="js/auth.js" defer></script>
+</body>
+</html>
