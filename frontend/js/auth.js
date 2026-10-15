@@ -95,7 +95,10 @@
 
     refreshNav() {
       const count = document.querySelector(".user-left-count");
-      if (count) count.textContent = FurifyAuth.getLeft();
+      const label = document.querySelector(".user-left-label");
+      const left = FurifyAuth.getLeft();
+      if (count) count.textContent = left;
+      if (label) label.textContent = left === 1 ? " identification token left" : " identification tokens left";
     },
 
     open: (mode, opts) => openModal(mode, opts),
@@ -107,52 +110,161 @@
   /* ==========================================================
      NAVBAR: swap "Log in | Sign up" for the user menu
      ========================================================== */
+  let navAbort = null;   // lets renderNav() run again without stacking up old listeners
+
   function renderNav() {
     const box = document.querySelector(".nav-auth");
     const user = FurifyAuth.getUser();
     if (!box || !user) return;
 
+    if (navAbort) navAbort.abort();
+    navAbort = new AbortController();
+    const { signal } = navAbort;
+
     box.innerHTML = `
       <div class="user-menu">
-        <button type="button" class="user-avatar" aria-haspopup="true" aria-expanded="false"></button>
-        <div class="user-dropdown" hidden>
-          <p class="user-name"></p>
-          <p class="user-left"><span class="user-left-count"></span> identifications left</p>
-          <hr>
-          <button type="button" class="user-logout">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <button type="button" class="user-avatar" aria-haspopup="menu" aria-expanded="false" aria-label="Account menu"></button>
+        <div class="user-dropdown" role="menu" hidden>
+          <span class="um-pill" aria-hidden="true"></span>
+          <a class="um-item" role="menuitem" href="profile.html" data-tone="tan">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="7.5" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8z"/></svg>
+            <span>View Profile</span>
+          </a>
+          <button type="button" class="um-item user-logout" role="menuitem" data-tone="red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
               <polyline points="16 17 21 12 16 7"/>
               <line x1="21" y1="12" x2="9" y2="12"/>
             </svg>
-            Log out
+            <span>Log out</span>
           </button>
+          <hr>
+          <p class="user-left"><span class="user-left-count"></span><span class="user-left-label"></span></p>
         </div>
       </div>`;
 
     const avatar   = box.querySelector(".user-avatar");
     const dropdown = box.querySelector(".user-dropdown");
+    const pill     = box.querySelector(".um-pill");
+    const items    = [...dropdown.querySelectorAll(".um-item")];
 
-    avatar.textContent = (user.name || user.email || "?").trim().charAt(0);
-    box.querySelector(".user-name").textContent = user.name || user.email;
+    /* ---- avatar: Google / profile photo if there is one, otherwise the first letter ---- */
+    const letter = (user.name || user.email || "?").trim().charAt(0);
+    const photo = user.photo || user.picture;
+    if (photo) {
+      const img = new Image();
+      img.alt = "";
+      img.referrerPolicy = "no-referrer";                 // Google photos need this
+      img.onerror = () => { img.remove(); avatar.textContent = letter; };
+      img.src = photo;
+      avatar.appendChild(img);
+    } else {
+      avatar.textContent = letter;
+    }
     FurifyAuth.refreshNav();
 
-    function setOpen(open) {
-      dropdown.hidden = !open;
-      avatar.setAttribute("aria-expanded", String(open));
+    /* ---- open / close: a soft, bouncy drop-down ---- */
+    const BOUNCE = "cubic-bezier(0.34, 1.56, 0.64, 1)";   // overshoots a little, then settles
+    const motion = !window.matchMedia("(prefers-reduced-motion: reduce)").matches && !!dropdown.animate;
+    let isOpen = false;
+    let running = [];
+    const stopRuns = () => { running.forEach((a) => a.cancel()); running = []; };
+
+    function open(fromKeyboard) {
+      if (isOpen) return;
+      isOpen = true;
+      stopRuns();
+      dropdown.hidden = false;
+      avatar.setAttribute("aria-expanded", "true");
+
+      if (!document.querySelector('link[rel="prefetch"][href="profile.html"]')) {   // so View Profile opens instantly
+        const l = document.createElement("link");
+        l.rel = "prefetch";
+        l.href = "profile.html";
+        document.head.appendChild(l);
+      }
+
+      if (motion) {
+        running.push(
+          dropdown.animate(
+            [{ opacity: 0, transform: "translateY(-18px) scale(0.78)" }, { opacity: 1, transform: "translateY(0) scale(1)" }],
+            { duration: 620, easing: BOUNCE, fill: "backwards" }
+          ),
+          avatar.animate([{ transform: "scale(0.88)" }, { transform: "scale(1)" }], { duration: 420, easing: BOUNCE })
+        );
+        // the rows drop in one after another
+        dropdown.querySelectorAll(".um-item, .user-left").forEach((el, i) =>
+          running.push(el.animate(
+            [{ opacity: 0, transform: "translateY(-12px)" }, { opacity: 1, transform: "translateY(0)" }],
+            { duration: 500, delay: 100 + i * 60, easing: BOUNCE, fill: "backwards" }
+          ))
+        );
+      }
+      if (fromKeyboard) items[0].focus();
+    }
+
+    function close(giveFocusBack) {
+      if (!isOpen) return;
+      isOpen = false;
+      avatar.setAttribute("aria-expanded", "false");
+      stopRuns();
+      pill.classList.remove("on");
+
+      if (motion) {
+        const out = dropdown.animate(
+          [{ opacity: 1, transform: "translateY(0) scale(1)" }, { opacity: 0, transform: "translateY(-10px) scale(0.92)" }],
+          { duration: 220, easing: "cubic-bezier(0.4, 0, 1, 1)", fill: "forwards" }
+        );
+        running.push(out);
+        out.onfinish = () => { if (!isOpen) dropdown.hidden = true; out.cancel(); };
+      } else {
+        dropdown.hidden = true;
+      }
+      if (giveFocusBack) avatar.focus();
     }
 
     avatar.addEventListener("click", (e) => {
       e.stopPropagation();
-      setOpen(dropdown.hidden);
+      if (isOpen) close(); else open(e.detail === 0);   // detail 0 = opened with the keyboard
+    }, { signal });
+
+    document.addEventListener("click", (e) => { if (!box.contains(e.target)) close(); }, { signal });
+
+    /* ---- the highlight that glides to whichever row you point at ---- */
+    function showPill(item) {
+      const wasHidden = !pill.classList.contains("on");
+      if (wasHidden) pill.style.transition = "none";      // first time: appear in place, then glide between rows
+      pill.style.height = item.offsetHeight + "px";
+      pill.style.transform = `translateY(${item.offsetTop}px)`;
+      pill.dataset.tone = item.dataset.tone;
+      if (wasHidden) { void pill.offsetWidth; pill.style.transition = ""; }
+      pill.classList.add("on");
+    }
+    items.forEach((item) => {
+      item.addEventListener("pointerenter", () => showPill(item), { signal });
+      item.addEventListener("focus", () => showPill(item), { signal });
     });
-    document.addEventListener("click", (e) => {
-      if (!box.contains(e.target)) setOpen(false);
-    });
+    dropdown.addEventListener("pointerleave", () => pill.classList.remove("on"), { signal });
+    dropdown.addEventListener("focusout", (e) => {
+      if (!dropdown.contains(e.relatedTarget)) pill.classList.remove("on");
+    }, { signal });
+
+    /* ---- keyboard ---- */
+    avatar.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowDown") { e.preventDefault(); open(true); }
+    }, { signal });
+
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") setOpen(false);
-    });
-    box.querySelector(".user-logout").addEventListener("click", FurifyAuth.logout);
+      if (!isOpen) return;
+      if (e.key === "Escape") { close(true); return; }
+      const at = items.indexOf(document.activeElement);
+      if (e.key === "ArrowDown") { e.preventDefault(); items[(at + 1) % items.length].focus(); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); items[(at - 1 + items.length) % items.length].focus(); }
+      else if (e.key === "Home") { e.preventDefault(); items[0].focus(); }
+      else if (e.key === "End") { e.preventDefault(); items[items.length - 1].focus(); }
+    }, { signal });
+
+    box.querySelector(".user-logout").addEventListener("click", FurifyAuth.logout, { signal });
   }
 
   renderNav();

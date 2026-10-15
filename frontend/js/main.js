@@ -130,7 +130,7 @@
   /* ---------- 4. hover: a small, slow drift toward the cursor ---------- */
   if (!canHover || reduce) return;
 
-  const SELECTOR = ".nav-links a, .nav-auth a";
+  const SELECTOR = ".nav-links a, .nav-auth > a";     // not the avatar dropdown: it has its own hover animation
   const target = (e) => e.target.closest && e.target.closest(SELECTOR);
 
   const MAX_X = 3.5;          // px the text may drift sideways
