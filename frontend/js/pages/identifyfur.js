@@ -45,6 +45,7 @@
   let previewURL = null;
   let stream = null;
   let lastResult = null;
+  let scanSource = "Upload"; // "Camera" or "Upload", sent to the backend
 
   /* ==========================================================
      FREE IDENTIFICATION COUNTER
@@ -53,10 +54,16 @@
   const FREE_LIMIT = 3;
   const STORAGE_KEY = "furify_free_left";
 
+
+  const MESSAGES = {
+  notDog: "❌ Image does not appear to contain a dog. Please try another photo.",
+  uncertain: "isn't clear enough to be sure. Try a sharper, well-lit photo.",
+};
   // TODO (auth.js / backend): when the user logs in, save something under
   // "furify_user" (e.g. localStorage.setItem("furify_user", "1")).
   // Logged-in users skip the free limit and the counter note is hidden.
   function isLoggedIn() {
+    if (window.FurifyAuth) return window.FurifyAuth.isLoggedIn();
     try { return !!localStorage.getItem("furify_user"); }
     catch { return false; }
   }
@@ -100,13 +107,14 @@
   /* ==========================================================
      PHOTO: choose, show, remove
      ========================================================== */
-  function setPhoto(file) {
+  function setPhoto(file, source = "Upload") {
     if (!file || !file.type.startsWith("image/")) {
       alert("Please choose an image file.");
       return;
     }
 
     selectedFile = file;
+    scanSource = source;
 
     if (previewURL) URL.revokeObjectURL(previewURL);
     previewURL = URL.createObjectURL(file);
@@ -154,7 +162,7 @@
   });
 
   cameraInput.addEventListener("change", () => {
-    if (cameraInput.files[0]) setPhoto(cameraInput.files[0]);
+    if (cameraInput.files[0]) setPhoto(cameraInput.files[0], "Camera");
     cameraInput.value = "";
   });
 
@@ -223,7 +231,7 @@
         const file = new File([blob], `furify-${Date.now()}.jpg`, {
           type: "image/jpeg",
         });
-        setPhoto(file);
+        setPhoto(file, "Camera");
         closeCamera();
       },
       "image/jpeg",
@@ -242,54 +250,58 @@
     if (e.target === cameraModal) closeCamera();
   });
 
-  /* ==========================================================
-     BACKEND HOOK: the ONLY function your friend needs to replace
-     ----------------------------------------------------------
-     Receives the photo as a File. Must return (or resolve to):
-       {
-         matches: [
-           { breed: "Golden Retriever", percent: 99 },   // top match first
-           { breed: "Labrador Retriever", percent: 1 },
-           { breed: "Flat Coated Retriever", percent: 0 }
-         ],
-         reason: "Short explanation of why the top match stood out."
-       }
+  
+ async function identifyPhoto(file) {
+  const form = new FormData();
+  form.append("file", file);
 
-     Example of the real version:
-       const form = new FormData();
-       form.append("photo", file);
-       const res = await fetch("/api/identify", { method: "POST", body: form });
-       if (!res.ok) throw new Error("Identification failed");
-       return await res.json();
-     ========================================================== */
-  async function identifyPhoto(file) {
-    // ---------- DEMO ONLY: fake result so the UI can be tested ----------
-    await new Promise((resolve) => setTimeout(resolve, 1200));
+  const headers = { "X-Scan-Source": scanSource };
 
-    const breeds = [
-      "Golden Retriever", "Labrador Retriever", "Flat Coated Retriever",
-      "Siberian Husky", "Shiba Inu", "Dachshund", "Cocker Spaniel",
-      "Doberman Pinscher", "Australian Shepherd", "Beagle",
-    ];
-    const picked = breeds.sort(() => Math.random() - 0.5).slice(0, 3);
-    const top = 70 + Math.floor(Math.random() * 29);        // 70-98
-    const second = Math.floor((100 - top) * 0.7);
-    const third = 100 - top - second;
-
-    return {
-      matches: [
-        { breed: picked[0], percent: top },
-        { breed: picked[1], percent: second },
-        { breed: picked[2], percent: third },
-      ],
-      reason:
-        `${picked[0]} is strongly supported by the dog's coat, ear shape, ` +
-        `facial features, and overall body shape. These traits closely match ` +
-        `the characteristics commonly seen in ${picked[0]}s.`,
-    };
-    // ---------- END DEMO ----------
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session && session.access_token) {
+      headers["Authorization"] = `Bearer ${session.access_token}`;
+    }
+  } catch (e) {
+    // supabase client not available: treated as a guest
   }
 
+  if (!headers["Authorization"]) {
+    let guestId = localStorage.getItem("furify_guest_id");
+    if (!guestId) {
+      guestId = "guest_" + crypto.randomUUID();
+      localStorage.setItem("furify_guest_id", guestId);
+    }
+    headers["X-Guest-Device-ID"] = guestId;
+  }
+
+  const res = await fetch("/api/predict", { method: "POST", headers, body: form });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Identification failed");
+  }
+  const data = await res.json();
+
+  if (data.status === "limit_reached") {
+    const e = new Error(data.message);
+    e.code = "limit";
+    throw e;
+  }
+  if (data.status === "not_dog") throw new Error(MESSAGES.notDog);
+  if (data.status === "error") throw new Error(data.message);
+
+  const matches = data.top3.map((m) => ({
+    breed: m.breed,
+    percent: Math.round(m.confidence * 100),  
+  }));
+
+  const reason = data.status === "uncertain"
+    ? `${data.breed} was the closest match, but the photo ${MESSAGES.uncertain}`
+    : (data.info ||
+       `${data.breed} was the strongest match based on the dog's coat, ear shape, facial features, and overall body shape.`);
+
+  return { matches, reason };
+}
   /* ==========================================================
      IDENTIFY BUTTON
      ========================================================== */
@@ -300,12 +312,13 @@
     const actions = $("limitActions");
 
     if (isLoggedIn()) {
-      title.textContent = "You've used all 50 identifications";
+      const maxUses = window.FurifyAuth ? window.FurifyAuth.MAX_USES : 30;
+      title.textContent = `You've used all ${maxUses} identifications`;
       sub.textContent = "Thanks for using Furify! More identifications are coming soon.";
       actions.hidden = true;
     } else {
       title.textContent = "You've used all your free identifications";
-      sub.textContent = "Log in or register to unlock 50 identifications.";
+      sub.textContent = "Log in or register to unlock more identifications.";
       actions.hidden = false;
     }
     limitModal.hidden = false;
@@ -332,8 +345,9 @@
 
       showResult(result);
     } catch (err) {
+      if (err.code === "limit") { setFreeLeft(0); showLimit(); return; }
       console.error(err);
-      alert("Sorry, we couldn't identify this photo. Please try again.");
+      alert(err.message || "Sorry, we couldn't identify this photo. Please try again.");
     } finally {
       identifyBtn.disabled = false;
       removeBtn.disabled = false;
@@ -403,7 +417,7 @@
         alert("Result copied to clipboard!");
       }
     } catch (err) {
-      // user cancelled the share sheet: nothing to do
+      // user cancelled the share sheet: nothing to  do
     }
   });
 

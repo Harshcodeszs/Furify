@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- SweetAlert2 CDN -->
+
   <title>Furify | Identify Fur</title>
 
   <!-- Fonts -->
@@ -16,6 +18,8 @@
   <link rel="stylesheet" href="css/transitions.css">
   <link rel="stylesheet" href="css/pages/login.css">
   <link rel="stylesheet" href="css/pages/identifyfur.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="page-identify">
 
@@ -58,7 +62,7 @@
       <div class="upload-wrap">
         <p class="upload-note" id="uploadNote">
           You have (<span id="freeLeft">3</span>) free identifications left.<br>
-          Log in or register to unlock 50 identifications.
+          Log in or register to unlock more identifications.
         </p>
 
         <div class="dropzone" id="dropzone">
@@ -151,7 +155,7 @@
       <p class="result-sub">Furify found a strong match based on the visible features of your dog.</p>
 
       <div class="result-why">
-        <h4>WHY THIS MATCH STOOD OUT</h4>
+        <h4>BREED INFORMATION</h4>
         <p id="resultWhy"></p>
       </div>
 
@@ -173,7 +177,7 @@
       <button type="button" class="modal-close" id="limitClose" aria-label="Close">&times;</button>
 
       <h3 class="result-title" id="limitTitle">You've used all your free identifications</h3>
-      <p class="result-sub" id="limitSub">Log in or register to unlock 50 identifications.</p>
+      <p class="result-sub" id="limitSub">Log in or register to unlock more identifications.</p>
 
       <div class="result-actions" id="limitActions">
         <a href="login.html?mode=signup&from=limit" class="btn-share">Sign up</a>
@@ -183,9 +187,19 @@
   </div>
 
   <!-- Scripts -->
+<!-- 1. Load the Supabase client library from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- 2. Initialize your Supabase connection with your project URL and Anon key -->
+    <script>
+      const SUPABASE_URL = 'https://dcxhatflnbpfoiijomts.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_1aDTXQHlLis8DYvBBAG8_A__JstC65y';
+      window.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
+<script src="js/auth.js" defer></script>
   <script src="js/transitions.js" defer></script>
   <script src="js/main.js" defer></script>
-  <script src="js/auth.js" defer></script>
+  
   <script src="js/pages/identifyfur.js" defer></script>
 </body>
 </html>

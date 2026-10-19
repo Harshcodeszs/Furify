@@ -2,6 +2,12 @@
    pages/history.css — recent identifications list + result popup
    ========================================================== */
 
+/* Force hidden modal items to truly vanish */
+.result-dialog [hidden],
+[hidden] {
+  display: none !important;
+}
+   
 [hidden] { display: none !important; }
 
 .visually-hidden {

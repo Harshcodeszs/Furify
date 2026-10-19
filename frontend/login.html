@@ -52,6 +52,17 @@
 
   <main style="min-height: 70vh;"></main>
 
+   <!-- Scripts -->
+<!-- 1. Load the Supabase client library from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- 2. Initialize your Supabase connection with your project URL and Anon key -->
+   <script>
+      const SUPABASE_URL = 'https://dcxhatflnbpfoiijomts.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_1aDTXQHlLis8DYvBBAG8_A__JstC65y';
+      window.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
+
   <!-- Scripts -->
   <script src="js/main.js" defer></script>
   <script src="js/auth.js" defer></script>

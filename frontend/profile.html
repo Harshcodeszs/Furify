@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Furify | Your profile</title>
+
+  <!-- Page-slide transitions: in <head>, NOT deferred -->
+  <script src="js/transitions.js"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Darumadrop+One&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/transitions.css">
+  <link rel="stylesheet" href="css/pages/profile.css">
+
+  <!-- Scripts (auth.js must come before profile.js) -->
+  <script src="js/main.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/pages/profile.js" defer></script>
+</head>
+<body class="page-profile">
+
+  <!-- ==================== NAVBAR ==================== -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <a href="index.html" class="logo">
+        <span class="logo-name">Furi<span class="logo-fy">fy</span></span>
+        <span class="logo-tagline">Discover your pet's breed.</span>
+      </a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="identifyfur.html">Identify Fur</a></li>
+      <li><a href="history.html">History</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+
+    <div class="nav-auth">
+      <a href="login.html">Log in</a>
+      <span>|</span>
+      <a href="login.html?mode=signup">Sign up</a>
+    </div>
+  </nav>
+
+  <!-- ==================== PROFILE ==================== -->
+  <main class="profile-main">
+    <div class="container">
+
+      <!-- Logged in: filled in by js/pages/profile.js from the user's saved info -->
+      <div id="profileView" hidden>
+        <h1 class="profile-title">Your profile</h1>
+        <p class="profile-sub" id="profileSub"></p>
+
+        <div class="profile-layout">
+
+          <!-- Left: photo, name, email -->
+          <aside class="profile-card">
+            <div class="profile-avatar" id="profileAvatar"></div>
+            <h2 class="profile-name" id="profileName"></h2>
+            <p class="profile-email" id="profileEmail"></p>
+            <span class="profile-chip" id="profileChip"></span>
+          </aside>
+
+          <!-- Right: details -->
+          <section class="profile-panel" aria-labelledby="detailsTitle">
+            <h2 id="detailsTitle">Account details</h2>
+
+            <dl class="profile-rows">
+              <div class="profile-row">
+                <dt>Full name</dt>
+                <dd id="rowName"></dd>
+              </div>
+              <div class="profile-row">
+                <dt>Email</dt>
+                <dd id="rowEmail"></dd>
+              </div>
+              <div class="profile-row">
+                <dt>Profile photo</dt>
+                <dd class="profile-photo-row">
+                  <span class="profile-mini" id="profileMini"></span>
+                  <span id="rowPhoto"></span>
+                </dd>
+              </div>
+              <div class="profile-row">
+                <dt>Identifications left</dt>
+                <dd class="profile-tokens">
+                  <span id="rowTokens"></span>
+                  <span class="token-bar" aria-hidden="true"><span id="tokenFill"></span></span>
+                </dd>
+              </div>
+            </dl>
+
+            <p class="profile-note" id="profileNote"></p>
+
+            <div class="profile-actions">
+              <a class="profile-btn profile-btn-solid" href="identifyfur.html">Identify a dog</a>
+              <button type="button" class="profile-btn profile-btn-outline" id="logoutBtn">Logout</button>
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+      <!-- Not logged in -->
+      <div class="profile-locked" id="profileLocked" hidden>
+        <div class="profile-lock-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        </div>
+        <h1>You're not logged in</h1>
+        <p>Log in or sign up to see your profile and your identifications left.</p>
+        <div class="profile-actions">
+          <button type="button" class="profile-btn profile-btn-solid" id="lockedLogin">Log in</button>
+          <button type="button" class="profile-btn profile-btn-outline" id="lockedSignup">Sign up</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <span class="logo-name">Furi<span class="logo-fy">fy</span></span>
+        <span class="logo-tagline">Identify your Fur now!</span>
+      </div>
+
+      <div class="footer-social">
+        <a href="#"><img src="assets/icons/instagram.svg" alt="Instagram"></a>
+        <a href="#"><img src="assets/icons/x.svg" alt="X"></a>
+        <a href="#"><img src="assets/icons/facebook.svg" alt="Facebook"></a>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <ul class="footer-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="identifyfur.html">Identify Fur</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </div>
+  </footer>
+
+   <!-- Scripts -->
+<!-- 1. Load the Supabase client library from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- 2. Initialize your Supabase connection with your project URL and Anon key -->
+   <script>
+      const SUPABASE_URL = 'https://dcxhatflnbpfoiijomts.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_1aDTXQHlLis8DYvBBAG8_A__JstC65y';
+      window.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
+<script src="js/auth.js" defer></script>
+  <script src="js/profile.js" defer></script>
+
+
+</body>
+</html>

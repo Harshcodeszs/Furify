@@ -84,7 +84,7 @@
       <p class="result-when" id="resultWhen"></p>
 
       <div class="result-why">
-        <h3>Why this match stood out</h3>
+        <h3>BREED INFORMATION</h3>
         <p id="resultWhy"></p>
       </div>
 
@@ -124,6 +124,24 @@
       </ul>
     </div>
   </footer>
+
+   <!-- Scripts -->
+<!-- 1. Load the Supabase client library from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- 2. Initialize your Supabase connection with your project URL and Anon key -->
+   <script>
+      const SUPABASE_URL = 'https://dcxhatflnbpfoiijomts.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_1aDTXQHlLis8DYvBBAG8_A__JstC65y';
+      window.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
+<script src="js/auth.js" defer></script>
+<script src="js/api.js"></script>
+<script src="js/pages/history.js" defer></script>
+
+
+
+
 
 </body>
 </html>

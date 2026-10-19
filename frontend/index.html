@@ -238,6 +238,16 @@
   </footer>
 
   <!-- Scripts -->
+    <!-- Scripts -->
+<!-- 1. Load the Supabase client library from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+   <script>
+      const SUPABASE_URL = 'https://dcxhatflnbpfoiijomts.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_1aDTXQHlLis8DYvBBAG8_A__JstC65y';
+      window.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
+<script src="js/auth.js" defer></script>
   <script src="js/main.js" defer></script>
   <script src="js/pages/home.js" defer></script>
 </body>

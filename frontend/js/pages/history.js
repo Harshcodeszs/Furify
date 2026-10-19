@@ -89,7 +89,19 @@
   }
 
   async function load() {
+    // Safely grab the API object at runtime instead of top-level scope
+    const api = window.FurifyAPI;
+    
     emptyEl.hidden = false;
+
+    // If api.js hasn't loaded or isn't defined, fall back to demo mode gracefully
+    if (!api || !api.history) {
+      entries = SAMPLE;
+      isDemo = true;
+      render();
+      return;
+    }
+
     emptyEl.textContent = "Loading your history…";
     try {
       entries = await api.history.list();
@@ -137,7 +149,7 @@
     deleteBtn.textContent = "Remove from history";
   }
 
-  function openResult(entry, trigger) {
+  async function openResult(entry, trigger) {
     current = entry;
     lastFocus = trigger;
     clearTimeout(closeT);
@@ -166,14 +178,27 @@
     whyEl.textContent = entry.reason ||
       `${entry.breed} was the closest match based on visible features such as the coat, ears, face, and body shape.`;
 
-    deleteBtn.hidden = isDemo;
+    // 🛡️ Hide delete button if it's demo mode OR if it's an unauthenticated guest
+    const supabase = window.supabase;
+    let isGuest = false;
+    if (supabase && supabase.auth) {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user && localStorage.getItem('furify_guest_id')) {
+          isGuest = true;
+        }
+      } catch (e) {
+        isGuest = true;
+      }
+    }
+
+    deleteBtn.hidden = isDemo || isGuest;
 
     modal.hidden = false;
     document.body.style.overflow = "hidden";
     requestAnimationFrame(() => requestAnimationFrame(() => modal.classList.add("open")));
     closeBtn.focus({ preventScroll: true });
   }
-
   function closeResult() {
     if (modal.hidden) return;
     modal.classList.remove("open");
