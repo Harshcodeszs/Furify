@@ -54,14 +54,11 @@
   const FREE_LIMIT = 3;
   const STORAGE_KEY = "furify_free_left";
 
-
   const MESSAGES = {
-  notDog: "❌ Image does not appear to contain a dog. Please try another photo.",
-  uncertain: "isn't clear enough to be sure. Try a sharper, well-lit photo.",
-};
-  // TODO (auth.js / backend): when the user logs in, save something under
-  // "furify_user" (e.g. localStorage.setItem("furify_user", "1")).
-  // Logged-in users skip the free limit and the counter note is hidden.
+    notDog: "No dog detected. Please try another photo.",
+    uncertain: "isn't clear enough to be sure. Try a sharper, well-lit photo.",
+  };
+
   function isLoggedIn() {
     if (window.FurifyAuth) return window.FurifyAuth.isLoggedIn();
     try { return !!localStorage.getItem("furify_user"); }
@@ -69,7 +66,6 @@
   }
 
   function getFreeLeft() {
-    // logged in: the 50-use counter lives in auth.js
     if (isLoggedIn() && window.FurifyAuth) return window.FurifyAuth.getLeft();
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -98,18 +94,22 @@
 
   renderFreeLeft();
 
-  // update the note + counter right after the user logs in from the popup
   document.addEventListener("furify:auth-change", renderFreeLeft);
-
-  // To reset while testing, run this in the browser console:
-  //   localStorage.removeItem("furify_free_left"); location.reload();
 
   /* ==========================================================
      PHOTO: choose, show, remove
      ========================================================== */
   function setPhoto(file, source = "Upload") {
     if (!file || !file.type.startsWith("image/")) {
-      alert("Please choose an image file.");
+      if (window.Swal) {
+        Swal.fire({
+          icon: "error",
+          title: "Invalid File",
+          text: "Please choose a valid image file.",
+        });
+      } else {
+        alert("Please choose an image file.");
+      }
       return;
     }
 
@@ -127,7 +127,6 @@
     removeBtn.hidden = false;
   }
 
-  // Back to the Camera / Upload view
   function resetPhoto() {
     selectedFile = null;
 
@@ -152,13 +151,11 @@
     fileInput.click();
   });
 
-  // Clicking the dropzone also opens the file picker
-  // (clicking an existing photo lets the user swap it)
   dropzone.addEventListener("click", () => fileInput.click());
 
   fileInput.addEventListener("change", () => {
     if (fileInput.files[0]) setPhoto(fileInput.files[0]);
-    fileInput.value = ""; // allows re-picking the same file
+    fileInput.value = "";
   });
 
   cameraInput.addEventListener("change", () => {
@@ -189,8 +186,6 @@
      CAMERA (live capture)
      ========================================================== */
   async function openCamera() {
-    // No camera API (or not https/localhost): fall back to the native picker.
-    // On phones this opens the camera app directly.
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       cameraInput.click();
       return;
@@ -219,7 +214,7 @@
   }
 
   function takePhoto() {
-    if (!cameraVideo.videoWidth) return; // video not ready yet
+    if (!cameraVideo.videoWidth) return;
 
     cameraCanvas.width = cameraVideo.videoWidth;
     cameraCanvas.height = cameraVideo.videoHeight;
@@ -250,62 +245,68 @@
     if (e.target === cameraModal) closeCamera();
   });
 
-  
- async function identifyPhoto(file) {
-  const form = new FormData();
-  form.append("file", file);
+  /* ==========================================================
+     IDENTIFY PHOTO (API Call)
+     ========================================================== */
+  async function identifyPhoto(file) {
+    const form = new FormData();
+    form.append("file", file);
 
-  const headers = { "X-Scan-Source": scanSource };
+    const headers = { "X-Scan-Source": scanSource };
 
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session && session.access_token) {
-      headers["Authorization"] = `Bearer ${session.access_token}`;
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session && session.access_token) {
+        headers["Authorization"] = `Bearer ${session.access_token}`;
+      }
+    } catch (e) {
+      // treated as a guest
     }
-  } catch (e) {
-    // supabase client not available: treated as a guest
-  }
 
-  if (!headers["Authorization"]) {
-    let guestId = localStorage.getItem("furify_guest_id");
-    if (!guestId) {
-      guestId = "guest_" + crypto.randomUUID();
-      localStorage.setItem("furify_guest_id", guestId);
+    if (!headers["Authorization"]) {
+      let guestId = localStorage.getItem("furify_guest_id");
+      if (!guestId) {
+        guestId = "guest_" + crypto.randomUUID();
+        localStorage.setItem("furify_guest_id", guestId);
+      }
+      headers["X-Guest-Device-ID"] = guestId;
     }
-    headers["X-Guest-Device-ID"] = guestId;
+
+    const res = await fetch("/api/predict", { method: "POST", headers, body: form });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || "Identification failed");
+    }
+    const data = await res.json();
+
+    if (data.status === "limit_reached") {
+      const e = new Error(data.message);
+      e.code = "limit";
+      throw e;
+    }
+    if (data.status === "not_dog") {
+      const e = new Error(MESSAGES.notDog);
+      e.code = "not_dog";
+      throw e;
+    }
+    if (data.status === "error") throw new Error(data.message);
+
+    const matches = data.top3.map((m) => ({
+      breed: m.breed,
+      percent: Math.round(m.confidence * 100),
+    }));
+
+    const reason = data.status === "uncertain"
+      ? `${data.breed} was the closest match, but the photo ${MESSAGES.uncertain}`
+      : (data.info ||
+         `${data.breed} was the strongest match based on the dog's coat, ear shape, facial features, and overall body shape.`);
+
+    return { matches, reason, status: data.status };
   }
 
-  const res = await fetch("/api/predict", { method: "POST", headers, body: form });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || "Identification failed");
-  }
-  const data = await res.json();
-
-  if (data.status === "limit_reached") {
-    const e = new Error(data.message);
-    e.code = "limit";
-    throw e;
-  }
-  if (data.status === "not_dog") throw new Error(MESSAGES.notDog);
-  if (data.status === "error") throw new Error(data.message);
-
-  const matches = data.top3.map((m) => ({
-    breed: m.breed,
-    percent: Math.round(m.confidence * 100),  
-  }));
-
-  const reason = data.status === "uncertain"
-    ? `${data.breed} was the closest match, but the photo ${MESSAGES.uncertain}`
-    : (data.info ||
-       `${data.breed} was the strongest match based on the dog's coat, ear shape, facial features, and overall body shape.`);
-
-  return { matches, reason };
-}
   /* ==========================================================
      IDENTIFY BUTTON
      ========================================================== */
-  // Popup shown when there are no identifications left
   function showLimit() {
     const title   = $("limitTitle");
     const sub     = $("limitSub");
@@ -327,7 +328,6 @@
   identifyBtn.addEventListener("click", async () => {
     if (!selectedFile) return;
 
-    // Out of uses -> guests are asked to log in / register
     if (getFreeLeft() <= 0) {
       showLimit();
       return;
@@ -340,14 +340,40 @@
     try {
       const result = await identifyPhoto(selectedFile);
 
-      // Only use up a free try when the identification actually succeeded
       setFreeLeft(getFreeLeft() - 1);
 
       showResult(result);
     } catch (err) {
-      if (err.code === "limit") { setFreeLeft(0); showLimit(); return; }
+      if (err.code === "limit") {
+        setFreeLeft(0);
+        showLimit();
+        return;
+      }
+      
+      if (err.code === "not_dog") {
+        if (window.Swal) {
+          Swal.fire({
+            icon: "warning",
+            title: "Not a Dog",
+            text: err.message,
+            confirmButtonColor: "#3085d6",
+          });
+        } else {
+          alert(err.message);
+        }
+        return;
+      }
+
       console.error(err);
-      alert(err.message || "Sorry, we couldn't identify this photo. Please try again.");
+      if (window.Swal) {
+        Swal.fire({
+          icon: "error",
+          title: "Identification Failed",
+          text: err.message || "Sorry, we couldn't identify this photo. Please try again.",
+        });
+      } else {
+        alert(err.message || "Sorry, we couldn't identify this photo. Please try again.");
+      }
     } finally {
       identifyBtn.disabled = false;
       removeBtn.disabled = false;
@@ -367,7 +393,6 @@
     resultTitle.textContent = `Top Match: ${top.breed}`;
     resultWhy.textContent = `\u201C${result.reason || ""}\u201D`;
 
-    // Breed chips (green / yellow / red)
     resultChips.innerHTML = "";
     matches.slice(0, 3).forEach((m, i) => {
       const chip = document.createElement("span");
@@ -397,13 +422,11 @@
     if (e.target === resultModal) closeResult();
   });
 
-  // "Try Another Photo" -> close popup and go back to Camera / Upload
   tryAgainBtn.addEventListener("click", () => {
     closeResult();
     resetPhoto();
   });
 
-  // Share (native share sheet on phones, copy to clipboard elsewhere)
   shareBtn.addEventListener("click", async () => {
     if (!lastResult) return;
     const top = lastResult.matches[0];
@@ -414,10 +437,20 @@
         await navigator.share({ title: "Furify", text, url: location.href });
       } else {
         await navigator.clipboard.writeText(`${text} ${location.href}`);
-        alert("Result copied to clipboard!");
+        if (window.Swal) {
+          Swal.fire({
+            icon: "success",
+            title: "Copied!",
+            text: "Result copied to clipboard!",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        } else {
+          alert("Result copied to clipboard!");
+        }
       }
     } catch (err) {
-      // user cancelled the share sheet: nothing to  do
+      // User cancelled share sheet
     }
   });
 

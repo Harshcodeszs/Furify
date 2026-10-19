@@ -68,7 +68,7 @@
 
     // identifications left
     const left = auth.getLeft();
-    const max = auth.MAX_USES || 50;
+    const max = auth.MAX_USES || 30;
     $("rowTokens").textContent = `${left} of ${max}`;
     requestAnimationFrame(() => {
       $("tokenFill").style.width = Math.max(0, Math.min(100, (left / max) * 100)) + "%";

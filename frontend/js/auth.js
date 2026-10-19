@@ -79,7 +79,7 @@
     }
     localStorage.removeItem(USER_KEY); 
   } catch {}
-  window.location.reload();
+  window.location.href = "index.html";
 },
 
     getLeft() {
@@ -455,17 +455,32 @@
     }
 
     let response, error;
+    const nameVal = data.name ? data.name.trim() : "";
 
     if (mode === "signup") {
       const res = await supabaseClient.auth.signUp({
         email: data.email.trim(),
         password: data.password,
         options: {
-          data: { name: data.name.trim() }
+          data: { 
+            full_name: nameVal, // <-- Changed 'name' to 'full_name'
+            name: nameVal
+           }
         }
       });
       response = res.data;
       error = res.error;
+
+      // Add this so email signups also populate your 'profiles' table
+      if (!error && response.user) {
+        await supabaseClient.from("profiles").upsert([
+          {
+            id: response.user.id,
+            full_name: nameVal,
+            avatar_url: null
+          }
+        ]);
+      }
     } else {
       const res = await supabaseClient.auth.signInWithPassword({
         email: data.email.trim(),
