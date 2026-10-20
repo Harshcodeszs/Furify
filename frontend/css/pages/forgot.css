@@ -1,0 +1,235 @@
+/* ==========================================================
+   css/pages/forgot.css: design for the "Forgot password" panel
+   Loaded automatically by js/auth.js (after login.css).
+   Uses the popup's own pieces from login.css: .auth-card (--cover-time,
+   --ease), .auth-title, .auth-input, .auth-msg and .btn-yellow.
+   ========================================================== */
+
+/* ==========================================================
+   Forgot password
+   The white layer starts as the log in half, then grows to cover
+   the whole card (same clip-path trick as the fur). JS flags on
+   .auth-card:   data-view="forgot"  -> the panel is open
+                 data-enter          -> text waits for the white to land
+                 data-back           -> log in form waits for the white to leave
+   ========================================================== */
+.auth-reset {
+  position: absolute;
+  inset: 0;
+  z-index: 4;                       /* above the fur (3) */
+  background: #fff;
+  clip-path: inset(0 50% 0 0);      /* = the log in half, so it grows out of it */
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    clip-path var(--cover-time) var(--ease),
+    visibility 0s linear var(--cover-time);   /* stay visible until it has shrunk back */
+}
+
+.auth-card[data-view="forgot"] .auth-reset {
+  clip-path: inset(0);
+  visibility: visible;
+  pointer-events: auto;
+  /* wait ~0.28s so the log in form has faded out before the white sweeps over it */
+  transition:
+    clip-path var(--cover-time) var(--ease) 0.28s,
+    visibility 0s linear 0.28s;
+}
+
+/* coming back: the log in form appears only after the white has left */
+.auth-card[data-back][data-phase="idle"][data-mode="login"] #loginForm {
+  transition: opacity 0.45s ease 0.75s, visibility 0s linear 0.75s;
+}
+
+/* ---------- the steps (one visible at a time) ---------- */
+.reset-step {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 320px;
+  max-width: calc(100% - 48px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  opacity: 0;
+  visibility: hidden;
+  translate: 28px 0;                /* waiting on the right */
+  transition:
+    opacity 0.25s ease,
+    translate 0.25s ease,
+    visibility 0s linear 0.25s;
+}
+
+.reset-step[data-pos="before"] {
+  translate: -28px 0;               /* already done: waits on the left */
+}
+
+.auth-card[data-view="forgot"] .reset-step.is-active {
+  opacity: 1;
+  visibility: visible;
+  translate: 0 0;
+  transition:
+    opacity 0.4s ease 0.1s,
+    translate 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s,
+    visibility 0s linear 0.1s;
+}
+
+/* first time only: show the text once the white has landed */
+.auth-card[data-view="forgot"][data-enter] .reset-step.is-active {
+  transition-delay: 0.85s;
+}
+
+/* ---------- icon badge ---------- */
+.reset-badge {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 12px;
+  color: #d99800;
+  background: #fff3c9;
+  border-radius: 50%;
+}
+
+.reset-badge svg {
+  width: 22px;
+  height: 22px;
+}
+
+.reset-badge.is-ok {
+  color: #2e8b57;
+  background: #dff3e6;
+}
+
+/* ---------- text ---------- */
+.reset-sub {
+  max-width: 300px;
+  margin: 6px 0 16px;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: #000;
+}
+
+.reset-sub strong {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.reset-step .btn-yellow {
+  min-width: 190px;
+}
+
+.reset-step .auth-msg.is-ok {
+  color: #2e7d32;
+}
+
+.reset-foot {
+  margin-top: 14px;
+  font-size: 9.5px;
+  color: #000;
+}
+
+.reset-foot-2 {
+  margin-top: 4px;
+}
+
+.reset-link {
+  font: 600 9.5px "Poppins", system-ui, sans-serif;
+  color: #b88600;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.reset-link:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.reset-link:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.reset-step .btn-yellow:last-child {
+  margin-top: 4px;
+}
+
+/* ---------- the 6 digit code ---------- */
+.code-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.code-box {
+  width: 42px;
+  height: 48px;
+  padding: 0;
+  font: 600 17px "Poppins", system-ui, sans-serif;
+  text-align: center;
+  color: #fff;
+  caret-color: #fabb00;
+  background: #0a0a0a;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  outline: none;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.code-box:focus {
+  border-color: #fabb00;
+  transform: translateY(-2px);
+}
+
+.code-box.is-filled {
+  border-color: rgba(250, 187, 0, 0.55);
+}
+
+/* ---------- phones: no slide, the panel simply replaces the forms ---------- */
+@media (max-width: 760px) {
+  .auth-card[data-view="forgot"] .auth-form {
+    display: none;
+  }
+
+  .auth-reset {
+    position: relative;
+    inset: auto;
+    display: none;
+    clip-path: none;
+    transition: none;
+  }
+
+  .auth-card[data-view="forgot"] .auth-reset {
+    display: block;
+    clip-path: none;
+    padding: 34px 24px;
+  }
+
+  .reset-step {
+    position: static;
+    display: none;
+    width: 100%;
+    max-width: none;
+    translate: none;
+    transition: none;
+  }
+
+  .auth-card[data-view="forgot"] .reset-step.is-active {
+    display: flex;
+    translate: none;
+    transition: none;
+  }
+
+  .code-box {
+    width: 38px;
+    height: 46px;
+  }
+}
