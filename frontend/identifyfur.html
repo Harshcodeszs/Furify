@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- SweetAlert2 CDN -->
+
+  <title>Furify | Identify Fur</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Darumadrop+One&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/transitions.css">
+  <link rel="stylesheet" href="css/pages/login.css">
+  <link rel="stylesheet" href="css/pages/identifyfur.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="page-identify">
+
+  <!-- ==================== NAVBAR ==================== -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <a href="index.html" class="logo">
+        <span class="logo-name">Furi<span class="logo-fy">fy</span></span>
+        <span class="logo-tagline">Discover your pet's breed.</span>
+      </a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="identifyfur.html" class="active">Identify Fur</a></li>
+      <li><a href="history.html">History</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+
+    <div class="nav-auth">
+      <a href="login.html">Log in</a>
+      <span>|</span>
+      <a href="login.html?mode=signup">Sign up</a>
+    </div>
+  </nav>
+
+  <!-- ==================== MAIN ==================== -->
+  <main>
+    <div class="container identify">
+
+      <!-- Left: sample dogs -->
+      <div class="dog-grid">
+        <div class="dog-card"><img src="assets/image/dog7.jpg" alt="Husky"></div>
+        <div class="dog-card"><img src="assets/image/dog10.jpg" alt="Cocker Spaniel"></div>
+        <div class="dog-card"><img src="assets/image/dog8.jpg" alt="Dachshund"></div>
+        <div class="dog-card"><img src="assets/image/dog9.jpg" alt="Shiba Inu"></div>
+      </div>
+
+      <!-- Right: upload -->
+      <div class="upload-wrap">
+        <p class="upload-note" id="uploadNote">
+          You have (<span id="freeLeft">3</span>) free identifications left.<br>
+          Log in or register to unlock more identifications.
+        </p>
+
+        <div class="dropzone" id="dropzone">
+          <!-- default content (hidden once a photo is chosen) -->
+          <div class="dropzone-empty" id="dropzoneEmpty">
+            <img class="dropzone-icon" src="assets/icons/upload-cloud.svg" class="icon" alt="">
+            <p class="dropzone-title">Drag and drop your dog photo here</p>
+            <p class="dropzone-sub">or click to upload, or use your camera</p>
+
+            <div class="dropzone-actions">
+              <button type="button" class="btn-dark" id="cameraBtn">
+                <img src="assets/icons/camera.svg" class="icon" alt=""> Camera
+              </button>
+              <button type="button" class="btn-dark" id="uploadBtn">
+                <img src="assets/icons/upload.svg" class="icon" alt=""> Upload
+              </button>
+            </div>
+          </div>
+
+          <!-- photo preview (shown once a photo is chosen) -->
+          <img class="dropzone-preview" id="previewImg" alt="Your dog photo" hidden>
+        </div>
+
+        <!-- Identify + Remove buttons (appear once a photo is available) -->
+        <div class="identify-action">
+          <button type="button" class="btn btn-primary identify-btn" id="identifyBtn" hidden>
+            Identify Fur
+          </button>
+          <button type="button" class="btn btn-remove identify-btn" id="removeBtn" hidden>
+            Remove
+          </button>
+        </div>
+
+        <!-- hidden inputs (outside the dropzone so clicks don't bubble into it) -->
+        <input type="file" id="fileInput" accept="image/*" hidden>
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <!-- Left: Logo & Tagline -->
+      <div class="footer-brand">
+        <span class="logo-name">Furi<span class="logo-fy">fy</span></span>
+        <span class="logo-tagline">Identify your Fur now!</span>
+      </div>
+
+      <!-- Right: Social Icons -->
+      <div class="footer-social">
+        <a href="#"><img src="assets/icons/instagram.svg" alt="Instagram"></a>
+        <a href="#"><img src="assets/icons/x.svg" alt="X"></a>
+        <a href="#"><img src="assets/icons/facebook.svg" alt="Facebook"></a>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <ul class="footer-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="identifyfur.html">Identify Fur</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- ==================== CAMERA POPUP ==================== -->
+  <div class="camera-modal" id="cameraModal" hidden>
+    <div class="camera-box">
+      <video id="cameraVideo" autoplay playsinline muted></video>
+      <canvas id="cameraCanvas" hidden></canvas>
+      <div class="camera-actions">
+        <button type="button" class="btn-dark" id="captureBtn">Take photo</button>
+        <button type="button" class="btn-dark" id="cancelCameraBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== RESULT POPUP ==================== -->
+  <div class="modal" id="resultModal" hidden>
+    <div class="modal-card result-card" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+      <button type="button" class="modal-close" id="resultClose" aria-label="Close">&times;</button>
+
+      <img class="result-photo" id="resultPhoto" alt="Your dog">
+
+      <div class="result-chips" id="resultChips"></div>
+
+      <h3 class="result-title" id="resultTitle"></h3>
+      <p class="result-sub">Furify found a strong match based on the visible features of your dog.</p>
+
+      <div class="result-why">
+        <h4>BREED INFORMATION</h4>
+        <p id="resultWhy"></p>
+      </div>
+
+      <div class="result-actions">
+        <button type="button" class="btn-share" id="shareBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M18 16a3 3 0 0 0-2.4 1.2l-6.5-3.7a3 3 0 0 0 0-2.9l6.5-3.7A3 3 0 1 0 15 5a3 3 0 0 0 .1.7L8.6 9.4a3 3 0 1 0 0 5.2l6.5 3.7A3 3 0 1 0 18 16z"/>
+          </svg>
+          Share
+        </button>
+        <button type="button" class="btn-ghost" id="tryAgainBtn">Try Another Photo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== LIMIT REACHED POPUP ==================== -->
+  <div class="modal" id="limitModal" hidden>
+    <div class="modal-card limit-card" role="dialog" aria-modal="true" aria-labelledby="limitTitle">
+      <button type="button" class="modal-close" id="limitClose" aria-label="Close">&times;</button>
+
+      <h3 class="result-title" id="limitTitle">You've used all your free identifications</h3>
+      <p class="result-sub" id="limitSub">Log in or register to unlock more identifications.</p>
+
+      <div class="result-actions" id="limitActions">
+        <a href="login.html?mode=signup&from=limit" class="btn-share">Sign up</a>
+        <a href="login.html?from=limit" class="btn-ghost">Log in</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+<!-- 1. Load the Supabase client library from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- 2. Initialize your Supabase connection with your project URL and Anon key -->
+    <script>
+      const SUPABASE_URL = 'https://dcxhatflnbpfoiijomts.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_1aDTXQHlLis8DYvBBAG8_A__JstC65y';
+      window.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
+<script src="js/auth.js" defer></script>
+  <script src="js/transitions.js" defer></script>
+  <script src="js/main.js" defer></script>
+  
+  <script src="js/pages/identifyfur.js" defer></script>
+</body>
+</html>

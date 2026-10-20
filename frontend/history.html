@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Furify | History</title>
+
+  <!-- Page-slide transitions: in <head>, NOT deferred -->
+  <script src="js/transitions.js"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Darumadrop+One&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/transitions.css">
+  <link rel="stylesheet" href="css/pages/history.css">
+
+  <!-- Scripts -->
+  <script src="js/api.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/pages/history.js" defer></script>
+</head>
+<body class="page-history">
+
+  <!-- ==================== NAVBAR ==================== -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <a href="index.html" class="logo">
+        <span class="logo-name">Furi<span class="logo-fy">fy</span></span>
+        <span class="logo-tagline">Discover your pet's breed.</span>
+      </a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="identifyfur.html">Identify Fur</a></li>
+      <li><a href="history.html" class="active" aria-current="page">History</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+
+    <div class="nav-auth">
+      <a href="login.html">Log in</a>
+      <span>|</span>
+      <a href="login.html?mode=signup">Sign up</a>
+    </div>
+  </nav>
+
+  <!-- ==================== HISTORY LIST ==================== -->
+  <main class="history-main">
+    <div class="container">
+
+      <label class="history-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>
+        <span class="visually-hidden">Search recent identifications</span>
+        <input type="search" id="historySearch" placeholder="Search Recent Fur Identification" autocomplete="off">
+      </label>
+
+      <ul class="history-list" id="historyList"></ul>
+
+      <p class="history-empty" id="historyEmpty" hidden>No Identification History Yet</p>
+    </div>
+  </main>
+
+  <!-- ==================== RESULT POPUP (filled in by history.js) ==================== -->
+  <div class="result-modal" id="resultModal" hidden>
+    <div class="result-backdrop" data-close></div>
+
+    <div class="result-dialog" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+      <button type="button" class="result-close" data-close aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+      </button>
+
+      <img class="result-photo" id="resultPhoto" alt="">
+
+      <ul class="result-chips" id="resultChips"></ul>
+
+      <h2 class="result-title" id="resultTitle"></h2>
+      <p class="result-sub" id="resultSub"></p>
+      <p class="result-when" id="resultWhen"></p>
+
+      <div class="result-why">
+        <h3>BREED INFORMATION</h3>
+        <p id="resultWhy"></p>
+      </div>
+
+      <div class="result-actions">
+        <button type="button" class="btn btn-yellow" id="shareBtn">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.2 10.7l7.6-4.4M8.2 13.3l7.6 4.4" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+          Share
+        </button>
+        <a class="btn btn-grey" href="identifyfur.html">Try Another Photo</a>
+      </div>
+
+      <button type="button" class="result-delete" id="deleteBtn">Remove from history</button>
+      <p class="result-toast" id="resultToast" role="status" aria-live="polite"></p>
+    </div>
+  </div>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <span class="logo-name">Furi<span class="logo-fy">fy</span></span>
+        <span class="logo-tagline">Identify your Fur now!</span>
+      </div>
+
+      <div class="footer-social">
+        <a href="#"><img src="assets/icons/instagram.svg" alt="Instagram"></a>
+        <a href="#"><img src="assets/icons/x.svg" alt="X"></a>
+        <a href="#"><img src="assets/icons/facebook.svg" alt="Facebook"></a>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <ul class="footer-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="identifyfur.html">Identify Fur</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </div>
+  </footer>
+
+   <!-- Scripts -->
+<!-- 1. Load the Supabase client library from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- 2. Initialize your Supabase connection with your project URL and Anon key -->
+   <script>
+      const SUPABASE_URL = 'https://dcxhatflnbpfoiijomts.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_1aDTXQHlLis8DYvBBAG8_A__JstC65y';
+      window.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
+<script src="js/auth.js" defer></script>
+<script src="js/api.js"></script>
+<script src="js/pages/history.js" defer></script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,451 @@
+/* ==========================================================
+   login.css: floating login / signup popup + navbar user menu
+   Self-contained: it does not depend on variables from style.css
+   ========================================================== */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Source+Sans+3:wght@700&display=swap");
+
+[hidden] {
+  display: none !important;
+}
+
+/* ==========================================================
+   Navbar user menu (shown on any page once logged in)
+   ========================================================== */
+.user-menu {
+  position: relative;
+}
+
+.user-avatar {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  font: 600 1rem "Poppins", system-ui, sans-serif;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  background: #ffd23f;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  min-width: 200px;
+  padding: 14px 18px;
+  text-align: center;
+  color: #fff;
+  text-shadow: none;
+  background: #57534e;
+  border-radius: 18px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+.user-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.user-left {
+  margin-top: 2px;
+  font-size: 0.7rem;
+  opacity: 0.85;
+}
+
+.user-dropdown hr {
+  margin: 10px 0;
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.user-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 500 0.8rem "Poppins", system-ui, sans-serif;
+  color: #fff;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.user-logout:hover {
+  text-decoration: underline;
+}
+
+/* Only used when someone opens login.html directly */
+.page-login {
+  min-height: 100vh;
+  background: #b09a86;
+}
+
+/* ==========================================================
+   Floating popup: blurred page behind, navbar stays sharp
+   ========================================================== */
+.auth-overlay,
+.auth-overlay * {
+  box-sizing: border-box;
+}
+
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;                 /* below the navbar (100) so it stays unblurred */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 84px 20px 24px;
+  font-family: "Poppins", "Segoe UI", system-ui, sans-serif;
+  background: rgba(60, 45, 35, 0.18);
+  -webkit-backdrop-filter: blur(9px);
+  backdrop-filter: blur(9px);
+
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+
+.auth-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease;
+}
+
+/* ---------- The card ---------- */
+.auth-card {
+  --cover-time: 0.7s;
+  --ease: cubic-bezier(0.77, 0, 0.18, 1);
+
+  position: relative;
+  width: 100%;
+  max-width: 690px;
+  height: 450px;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+
+  transform: translateY(16px) scale(0.97);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.auth-overlay.is-open .auth-card {
+  transform: none;
+}
+
+/* Used by JS to set the starting state without animating */
+.auth-card.no-anim,
+.auth-card.no-anim * {
+  transition: none !important;
+}
+
+/* ---------- Forms (each fills one half) ---------- */
+.auth-form {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 34px;
+  text-align: center;
+
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+
+#loginForm  { left: 0; }
+#signupForm { left: 50%; }
+
+.auth-card[data-phase="idle"][data-mode="login"] #loginForm,
+.auth-card[data-phase="idle"][data-mode="signup"] #signupForm {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.45s ease 0.5s, visibility 0s linear 0.5s;
+}
+
+.auth-title {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #000;
+}
+
+.auth-sub {
+  margin: 5px 0 18px;
+  font-size: 8.5px;
+  font-weight: 400;
+  color: #000;
+}
+
+.auth-input {
+  width: 100%;
+  height: 42px;
+  margin-bottom: 10px;
+  padding: 0 25px;
+  font: 400 11px "Poppins", system-ui, sans-serif;
+  color: #fff;
+  background: #0a0a0a;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.auth-input::placeholder {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.auth-input:focus {
+  border-color: #fabb00;
+}
+
+/* keep the dark pill when the browser autofills */
+.auth-input:-webkit-autofill,
+.auth-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #fff;
+  box-shadow: 0 0 0 100px #0a0a0a inset;
+  caret-color: #fff;
+}
+
+.auth-link {
+  font: 400 8px "Poppins", system-ui, sans-serif;
+  color: #000;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+.auth-msg {
+  min-height: 15px;
+  margin: 2px 0 4px;
+  font-size: 9px;
+  line-height: 1.3;
+  color: #c0392b;
+}
+
+.btn-yellow {
+  min-width: 147px;
+  height: 42px;
+  padding: 0 32px;
+  font: 400 13px "Poppins", system-ui, sans-serif;
+  color: #fff;
+  background: #fabb00;
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.btn-yellow:hover {
+  background: #e5aa00;
+  transform: translateY(-2px);
+}
+
+.btn-yellow:disabled {
+  opacity: 0.8;
+  cursor: wait;
+  transform: none;
+}
+
+.auth-or {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  width: 90%;
+  margin: 12px 0;
+  font-size: 9px;
+  color: #000;
+}
+
+.auth-or::before,
+.auth-or::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid #000;
+}
+
+.btn-social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 40px;
+  margin-bottom: 10px;
+  font: 600 10px "Poppins", system-ui, sans-serif;
+  color: #fff;
+  background: #0a0a0a;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-social:hover {
+  background: #2a2a2a;
+}
+
+.btn-social:last-of-type {
+  margin-bottom: 0;
+}
+
+/* "Don't have an account?" text link: mobile only */
+.auth-switch {
+  display: none;
+}
+
+/* ==========================================================
+   Sliding fur panel (image is set from auth.js)
+   Always full size and revealed with clip-path:
+     login  -> right half   cover -> all   signup -> left half
+   ========================================================== */
+.auth-cover {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: #8a5a2b center / cover no-repeat;
+  clip-path: inset(0 0 0 50%);
+  transition: clip-path var(--cover-time) var(--ease);
+  will-change: clip-path;
+}
+
+.auth-card[data-mode="signup"] .auth-cover {
+  clip-path: inset(0 50% 0 0);
+}
+
+/* must stay AFTER the mode rule so it wins during the swap */
+.auth-card[data-phase="cover"] .auth-cover {
+  clip-path: inset(0);
+}
+
+/* ---------- Text on the fur ---------- */
+.cover-text {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 52px;
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.cover-text.for-login  { left: 50%; }
+.cover-text.for-signup { left: 0; }
+
+.auth-card[data-phase="idle"][data-mode="login"] .for-login,
+.auth-card[data-phase="idle"][data-mode="signup"] .for-signup {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.45s ease 0.5s;
+}
+
+.cover-text h2 {
+  font-family: "Source Sans 3", "Poppins", system-ui, sans-serif;
+  font-size: 31px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.cover-text p {
+  margin-top: 16px;
+  font-size: 8.5px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.cover-text .cover-prompt {
+  margin: 70px 0 14px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.for-signup .btn-yellow {
+  margin-top: 66px;
+}
+
+.for-signup .cover-prompt {
+  margin: 14px 0 0;
+}
+
+/* ==========================================================
+   Mobile: no sliding, forms stack and a text link switches them
+   ========================================================== */
+@media (max-width: 760px) {
+  .auth-card {
+    height: auto;
+    max-width: 400px;
+  }
+
+  .auth-cover {
+    display: none;
+  }
+
+  .auth-form {
+    position: static;
+    width: 100%;
+    padding: 34px 28px;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .auth-card[data-mode="login"]  #signupForm,
+  .auth-card[data-mode="signup"] #loginForm {
+    display: none;
+  }
+
+  .auth-overlay {
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+
+  .auth-switch {
+    display: block;
+    margin-top: 14px;
+    font-size: 11px;
+    color: #000;
+  }
+
+  .auth-switch button {
+    font: 600 11px "Poppins", system-ui, sans-serif;
+    color: #b88600;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .auth-switch button:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Respect "reduce motion" settings */
+@media (prefers-reduced-motion: reduce) {
+  .auth-overlay,
+  .auth-overlay * {
+    transition-duration: 0.01s !important;
+    transition-delay: 0s !important;
+  }
+}

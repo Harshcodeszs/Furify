@@ -1,0 +1,233 @@
+/* ==========================================================
+   style.css — global variables, reset, layout, navbar, footer
+   ========================================================== */
+
+:root {
+  --tan: #b09a86;
+  --tan-dark: #a38b76;
+  --tan-footer: #baa795;
+  --cream: #f8f4ee;
+  --white: #ffffff;
+  --ink: #1a1a1a;
+  --grey-box: #d9d9d9;
+  --blue: #2563eb;
+  --blue-hover: #1d4ed8;
+  --yellow: #ffd23f;
+
+  --font: "Poppins", "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  --font-logo: "Darumadrop One", "Poppins", sans-serif;
+  --font-note: "Bellota Text", "Poppins", sans-serif;
+  --radius-lg: 28px;
+  --radius-md: 14px;
+  --shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  --nav-height: 64px;
+}
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font);
+  color: var(--ink);
+  background: var(--white);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+}
+
+/* ---------- Layout helpers ---------- */
+.container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.section-subtitle {
+  max-width: 640px;
+  margin: 8px auto 0;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+/* ==================== NAVBAR ==================== */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  height: var(--nav-height);
+  padding: 0 40px;
+  background: var(--cream);
+}
+
+.nav-logo img {
+  height: 44px;
+  width: auto;
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+  margin-right: auto;
+  margin-left: 32px;
+}
+
+.nav-links a {
+  position: relative;
+  padding: 4px 0;
+  font-size: 0.9rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1.5px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
+}
+
+.nav-links a:hover::after,
+.nav-links a.active::after {
+  transform: scaleX(1);
+}
+
+.nav-auth {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+.nav-auth a:hover {
+  text-decoration: underline;
+}
+
+/* ==================== FOOTER ==================== */
+.footer {
+  padding: 32px 0 20px;
+  background: var(--tan-footer);
+}
+
+.footer-layout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.footer-brand .logo-tagline {
+ display: block;
+  font-size: 0.7rem;  
+  margin-top:5px;
+}
+
+.footer-social {
+  display: flex;
+  gap: 20px;
+}
+
+.footer-social img {
+  width: 22px;
+  height: 22px;
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+.footer-social a:hover img {
+  opacity: 1;
+}
+
+.footer-bottom {
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+.footer-links {
+  display: flex;
+  gap: 18px;
+  font-size: 0.7rem;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 720px) {
+  .navbar {
+    height: auto;
+    flex-wrap: wrap;
+    padding: 10px 20px;
+    gap: 8px 16px;
+  }
+
+  .nav-links {
+    order: 3;
+    width: 100%;
+    margin: 0;
+    gap: 20px;
+    overflow-x: auto;
+  }
+
+  .nav-auth {
+    margin-left: auto;
+  }
+
+  .footer-layout {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
