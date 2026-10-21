@@ -39,8 +39,6 @@
      Its position lives in 4 CSS variables. js/transitions.js already put them where the bar was
      on the previous page, so it is visible there from the very first paint; here we just
      change them and the CSS transition does the gliding. */
-  // exact position ON SCREEN (not relative to the list), so it is right even if two pages'
-  // navbars sit a few pixels differently. offsetLeft/Top ignore the hover drift of the links.
   const geo = (a) => {
     const base = list.getBoundingClientRect();
     return {
@@ -60,7 +58,7 @@
   const remember = (g) => {
     try { sessionStorage.setItem(BAR_KEY, JSON.stringify({ ...g, t: Date.now() })); } catch (e) {}
   };
-  const readPrevious = () => {                      // where the last page left the line (if we just came from one)
+  const readPrevious = () => {                          // where the last page left the line (if we just came from one)
     try {
       const v = JSON.parse(sessionStorage.getItem(BAR_KEY) || "null");
       return v && Date.now() - v.t < 6000 ? v : null;
@@ -70,7 +68,7 @@
   let gliding = false;
 
   if (!current) {
-    list.style.setProperty("--bar-o", "0");          // e.g. login page: no line
+    list.style.setProperty("--bar-o", "0");           // e.g. login page: no line
     try { sessionStorage.removeItem(BAR_KEY); } catch (e) {}
   } else {
     const g = geo(current);
@@ -78,7 +76,7 @@
     const moved = prev && (Math.abs(prev.x - g.x) > 0.5 || Math.abs(prev.y - g.y) > 0.5 || Math.abs(prev.w - g.w) > 0.5);
     const canAnimatePseudo = typeof KeyframeEffect !== "undefined" && "pseudoElement" in KeyframeEffect.prototype;
 
-    list.classList.add("no-anim");                   // put the line at its final spot first (no CSS transition involved)...
+    list.classList.add("no-anim");                     // put the line at its final spot first (no CSS transition involved)...
     setBar(g);
     void list.offsetWidth;
     list.classList.remove("no-anim");
@@ -95,7 +93,6 @@
     remember(g);
   }
 
-  // fonts / window size can move the links a little: follow them without interrupting a glide
   function refresh() {
     if (!current) return;
     const g = geo(current);
@@ -130,7 +127,7 @@
   /* ---------- 4. hover: a small, slow drift toward the cursor ---------- */
   if (!canHover || reduce) return;
 
- const SELECTOR = ".nav-links a, .nav-auth > a";     // not the avatar dropdown: it has its own hover animation
+  const SELECTOR = ".nav-links a, .nav-auth > a";     // not the avatar dropdown: it has its own hover animation
   const target = (e) => e.target.closest && e.target.closest(SELECTOR);
 
   const MAX_X = 3.5;          // px the text may drift sideways
@@ -209,3 +206,52 @@
     kick();
   });
 })();
+
+/* ==========================================================
+   Supabase Auth State Listener & Instant UI Sync
+   ========================================================== */
+document.addEventListener("DOMContentLoaded", () => {
+  if (!window.supabase) return;
+
+  // 1. Check session immediately on page load (handles redirect hashes from email/Google OAuth)
+  window.supabase.auth.getSession().then(({ data: { session } }) => {
+    if (session?.user) {
+      processSession(session.user);
+    }
+  });
+
+  // 2. Listen for ongoing auth state changes
+  window.supabase.auth.onAuthStateChange((event, session) => {
+    if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
+      processSession(session.user);
+    }
+  });
+
+  function processSession(sbUser) {
+    if (!window.FurifyAuth) return;
+
+    const existing = window.FurifyAuth.getUser();
+    
+    // Build user object from Supabase metadata
+    const userMeta = sbUser.user_metadata || {};
+    const provider = sbUser.app_metadata?.provider || sbUser.identities?.[0]?.provider || 'email';
+
+    const user = {
+      name: userMeta.name || userMeta.full_name || sbUser.email.split('@')[0],
+      email: sbUser.email,
+      photo: userMeta.avatar_url || userMeta.picture || null,
+      id: sbUser.id,
+      provider: provider === 'google' ? 'Google' : 'email'
+    };
+
+    // If local storage doesn't match or doesn't have the user yet, log them in
+    if (!existing || existing.id !== sbUser.id) {
+      window.FurifyAuth.login(user);
+    }
+
+    // Immediately trigger navbar re-render so login buttons vanish instantly
+    if (typeof window.FurifyAuth.renderNav === 'function') {
+      window.FurifyAuth.renderNav();
+    }
+  }
+});

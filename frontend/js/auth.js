@@ -8,9 +8,6 @@
    Add this ONE line to every page (before </body>):
      <script src="js/auth.js" defer></script>
    The popup's CSS (css/pages/login.css) loads itself.
-
-   NOTE: front-end only. Accounts are NOT really created or checked
-   yet. Everything marked "BACKEND HOOK" is for your friend.
    ========================================================== */
 (() => {
   const $ = (id) => document.getElementById(id);
@@ -18,6 +15,15 @@
   /* ---------- paths (relative to the HTML pages) ---------- */
   const CSS_FILE  = "css/pages/login.css";
   const FUR_IMAGE = "assets/image/fur.jpg";
+
+  /* forgot-password feature: its own css + js (the markup is in login.html), loaded when the popup is first built */
+  const FORGOT_HTML_REL = "login.html";   // the panel markup lives in <template id="forgotTemplate"> in this file
+  const FORGOT_CSS_REL = "css/pages/forgot.css";
+  const FORGOT_JS_REL  = "js/forgot.js";
+  const AUTH_URL = document.currentScript && document.currentScript.src;
+  const FORGOT_JS  = AUTH_URL ? new URL("forgot.js", AUTH_URL).href : FORGOT_JS_REL;
+  const FORGOT_HTML = AUTH_URL ? new URL("../login.html", AUTH_URL).href : FORGOT_HTML_REL;
+  const FORGOT_CSS = AUTH_URL ? new URL("../css/pages/forgot.css", AUTH_URL).href : FORGOT_CSS_REL;
 
   /* ---------- storage ---------- */
   const USER_KEY  = "furify_user";   // logged-in user  { name, email }
@@ -73,14 +79,14 @@
     },
 
     async logout() {
-  try { 
-    if (typeof supabase !== 'undefined') {
-      await supabase.auth.signOut();
-    }
-    localStorage.removeItem(USER_KEY); 
-  } catch {}
-  window.location.href = "index.html";
-},
+      try { 
+        if (typeof supabase !== 'undefined') {
+          await supabase.auth.signOut();
+        }
+        localStorage.removeItem(USER_KEY); 
+      } catch {}
+      window.location.href = "index.html";
+    },
 
     getLeft() {
       const user = FurifyAuth.getUser();
@@ -100,11 +106,13 @@
 
     refreshNav() {
       const count = document.querySelector(".user-left-count");
-     const label = document.querySelector(".user-left-label");
+      const label = document.querySelector(".user-left-label");
       const left = FurifyAuth.getLeft();
       if (count) count.textContent = left;
       if (label) label.textContent = left === 1 ? " identification token left" : " identification tokens left";
     },
+
+    renderNav: () => renderNav(),
 
     open: (mode, opts) => openModal(mode, opts),
     close: () => closeModal(),
@@ -115,14 +123,14 @@
   /* ==========================================================
      NAVBAR: swap "Log in | Sign up" for the user menu
      ========================================================== */
-  let navAbort = null;   // lets renderNav() run again without stacking up old listeners
+  let navAbort = null;
 
   function renderNav() {
     const box = document.querySelector(".nav-auth");
     const user = FurifyAuth.getUser();
     if (!box || !user) return;
 
-     if (navAbort) navAbort.abort();
+    if (navAbort) navAbort.abort();
     navAbort = new AbortController();
     const { signal } = navAbort;
 
@@ -148,19 +156,17 @@
         </div>
       </div>`;
 
-    const avatar   = box.querySelector(".user-avatar");
+    const avatar = box.querySelector(".user-avatar");
     const dropdown = box.querySelector(".user-dropdown");
+    const pill = box.querySelector(".um-pill");
+    const items = [...dropdown.querySelectorAll(".um-item")];
 
-     const pill     = box.querySelector(".um-pill");
-    const items    = [...dropdown.querySelectorAll(".um-item")];
-
-    /* ---- avatar: Google / profile photo if there is one, otherwise the first letter ---- */
     const letter = (user.name || user.email || "?").trim().charAt(0);
     const photo = user.photo || user.picture;
     if (photo) {
       const img = new Image();
       img.alt = "";
-      img.referrerPolicy = "no-referrer";                 // Google photos need this
+      img.referrerPolicy = "no-referrer";
       img.onerror = () => { img.remove(); avatar.textContent = letter; };
       img.src = photo;
       avatar.appendChild(img);
@@ -169,8 +175,7 @@
     }
     FurifyAuth.refreshNav();
 
-     /* ---- open / close: a soft, bouncy drop-down ---- */
-    const BOUNCE = "cubic-bezier(0.34, 1.56, 0.64, 1)";   // overshoots a little, then settles
+    const BOUNCE = "cubic-bezier(0.34, 1.56, 0.64, 1)";
     const motion = !window.matchMedia("(prefers-reduced-motion: reduce)").matches && !!dropdown.animate;
     let isOpen = false;
     let running = [];
@@ -183,7 +188,7 @@
       dropdown.hidden = false;
       avatar.setAttribute("aria-expanded", "true");
 
-      if (!document.querySelector('link[rel="prefetch"][href="profile.html"]')) {   // so View Profile opens instantly
+      if (!document.querySelector('link[rel="prefetch"][href="profile.html"]')) {
         const l = document.createElement("link");
         l.rel = "prefetch";
         l.href = "profile.html";
@@ -198,7 +203,6 @@
           ),
           avatar.animate([{ transform: "scale(0.88)" }, { transform: "scale(1)" }], { duration: 420, easing: BOUNCE })
         );
-        // the rows drop in one after another
         dropdown.querySelectorAll(".um-item, .user-left").forEach((el, i) =>
           running.push(el.animate(
             [{ opacity: 0, transform: "translateY(-12px)" }, { opacity: 1, transform: "translateY(0)" }],
@@ -231,15 +235,14 @@
 
     avatar.addEventListener("click", (e) => {
       e.stopPropagation();
-     if (isOpen) close(); else open(e.detail === 0);   // detail 0 = opened with the keyboard
+      if (isOpen) close(); else open(e.detail === 0);
     }, { signal });
 
     document.addEventListener("click", (e) => { if (!box.contains(e.target)) close(); }, { signal });
 
-    /* ---- the highlight that glides to whichever row you point at ---- */
     function showPill(item) {
       const wasHidden = !pill.classList.contains("on");
-      if (wasHidden) pill.style.transition = "none";      // first time: appear in place, then glide between rows
+      if (wasHidden) pill.style.transition = "none";
       pill.style.height = item.offsetHeight + "px";
       pill.style.transform = `translateY(${item.offsetTop}px)`;
       pill.dataset.tone = item.dataset.tone;
@@ -255,12 +258,11 @@
       if (!dropdown.contains(e.relatedTarget)) pill.classList.remove("on");
     }, { signal });
 
-    /* ---- keyboard ---- */
     avatar.addEventListener("keydown", (e) => {
       if (e.key === "ArrowDown") { e.preventDefault(); open(true); }
     }, { signal });
     document.addEventListener("keydown", (e) => {
-     if (!isOpen) return;
+      if (!isOpen) return;
       if (e.key === "Escape") { close(true); return; }
       const at = items.indexOf(document.activeElement);
       if (e.key === "ArrowDown") { e.preventDefault(); items[(at + 1) % items.length].focus(); }
@@ -277,9 +279,9 @@
   /* ==========================================================
      THE POPUP
      ========================================================== */
-  const COVER_MS = 700; // keep in sync with --cover-time in login.css
+  const COVER_MS = 700;
   const isMobile = window.matchMedia("(max-width: 760px)");
-  const standalone = document.body.classList.contains("page-login"); // login.html opened directly
+  const standalone = document.body.classList.contains("page-login");
 
   let overlay = null;
   let card = null;
@@ -288,15 +290,11 @@
   let anims = [];
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-  /* ---------- scroll lock: nothing behind the popup can move ----------
-     body overflow alone isn't enough (the home page scrolls itself with scripts),
-     so wheel / touch / scroll keys are also stopped before any page script sees them. */
   const rootEl = document.documentElement;
   const SCROLL_KEYS = ["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "];
   let locked = false;
   let savedPad = "";
 
-  // something inside the popup that can really scroll (tiny phone screens)
   function scrollsInside(el) {
     if (!overlay) return false;
     for (let n = el; n && n !== document.body; n = n.parentElement) {
@@ -310,7 +308,7 @@
   function lockScroll() {
     if (locked) return;
     locked = true;
-    const gap = window.innerWidth - rootEl.clientWidth;   // scrollbar width: stops the page jumping sideways
+    const gap = window.innerWidth - rootEl.clientWidth;
     savedPad = rootEl.style.paddingRight;
     if (gap > 0) rootEl.style.paddingRight = gap + "px";
     rootEl.style.overflow = "hidden";
@@ -328,7 +326,7 @@
   }
 
   const swallow = (e) => {
-    e.stopImmediatePropagation();                         // page scripts never see it
+    e.stopImmediatePropagation();
     if (!scrollsInside(e.target)) e.preventDefault();
   };
   window.addEventListener("wheel", (e) => { if (locked && !e.ctrlKey) swallow(e); }, { capture: true, passive: false });
@@ -340,7 +338,6 @@
     e.preventDefault();
   }, true);
 
-  /* ---------- pop in / pop out ---------- */
   function playOpen() {
     anims.forEach((a) => a.cancel());
     anims = [];
@@ -352,7 +349,7 @@
           { opacity: 0, scale: 0.86, translate: "0 28px", filter: "blur(8px)" },
           { opacity: 1, scale: 1, translate: "0 0", filter: "blur(0px)" },
         ],
-        { duration: 540, easing: "cubic-bezier(0.34, 1.45, 0.64, 1)", fill: "backwards" }   // slight overshoot = the "pop"
+        { duration: 540, easing: "cubic-bezier(0.34, 1.45, 0.64, 1)", fill: "backwards" }
       )
     );
   }
@@ -378,11 +375,6 @@
       <path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/>
       <path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 0 1 0-9.4l-7.9-6.1a24 24 0 0 0 0 21.6l7.9-6.1z"/>
       <path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/>
-    </svg>`;
-
-  const PHONE_ICON = `
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>
     </svg>`;
 
   const SOCIAL = `
@@ -433,21 +425,17 @@
       </div>
     </div>`;
 
-  /* ---------- BACKEND HOOK: replace this with the real request ----------
-     mode: "login" or "signup"
-     data: { email, password } or { name, email, password }
-     Must resolve to { user: { name, email } } or throw an Error whose
-     message is shown to the user (e.g. "Wrong email or password").
+  /* ---------- Point 5: Friendly Error Mapping ---------- */
+  function mapAuthError(msg) {
+    if (!msg) return "An unexpected error occurred. Please try again.";
+    const lower = msg.toLowerCase();
+    if (lower.includes("invalid login credentials")) return "Incorrect email or password.";
+    if (lower.includes("email not confirmed")) return "Please check your email and confirm your account first.";
+    if (lower.includes("user already registered") || lower.includes("already registered")) return "An account with this email already exists.";
+    if (lower.includes("password should be at least")) return "Password must be at least 6 characters.";
+    return "Something went wrong. Please try again.";
+  }
 
-     Example:
-       const res = await fetch(`/api/${mode}`, {
-         method: "POST",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify(data),
-       });
-       if (!res.ok) throw new Error((await res.json()).message);
-       return await res.json();
-  ------------------------------------------------------------------------ */
   async function authRequest(mode, data) {
     const supabaseClient = window.supabase;
     if (!supabaseClient) {
@@ -463,7 +451,7 @@
         password: data.password,
         options: {
           data: { 
-            full_name: nameVal, // <-- Changed 'name' to 'full_name'
+            full_name: nameVal,
             name: nameVal
            }
         }
@@ -471,7 +459,11 @@
       response = res.data;
       error = res.error;
 
-      // Add this so email signups also populate your 'profiles' table
+      // Point 7: Check if email already exists under Supabase security settings (empty identities)
+      if (!error && response.user && response.user.identities && response.user.identities.length === 0) {
+        throw new Error("An account with this email already exists. Please log in instead.");
+      }
+
       if (!error && response.user) {
         await supabaseClient.from("profiles").upsert([
           {
@@ -491,10 +483,15 @@
     }
 
     if (error) {
-      throw new Error(error.message);
+      throw new Error(mapAuthError(error.message));
     }
 
-    const sbUser = response.user;
+    // Point 1: Ensure user object actually exists
+    const sbUser = response?.user;
+    if (!sbUser) {
+      throw new Error(mode === "signup" ? "Please check your email to confirm your account." : "Login failed. No session returned.");
+    }
+
     const userMeta = sbUser.user_metadata || {};
     const provider = sbUser.app_metadata?.provider || sbUser.identities?.[0]?.provider || "email";
 
@@ -509,7 +506,6 @@
     return { user };
   }
 
-  /* ---------- build the popup once, the first time it is needed ---------- */
   function build() {
     if (overlay) return;
 
@@ -524,12 +520,10 @@
     $("authCover").style.backgroundImage =
       `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url("${FUR_IMAGE}")`;
 
-    // close: click the blurred background
     overlay.addEventListener("click", (e) => {
       if (e.target === overlay) closeModal();
     });
 
-    // switch between log in / sign up
     overlay.querySelectorAll("[data-switch]").forEach((btn) =>
       btn.addEventListener("click", () => switchTo(btn.dataset.switch))
     );
@@ -537,54 +531,104 @@
     handleForm($("loginForm"), "login");
     handleForm($("signupForm"), "signup");
 
-    // BACKEND HOOK: connect Google / phone sign-in here.
-   // Real Google OAuth Connection
-   // Real Google OAuth Connection
     overlay.querySelectorAll(".btn-social").forEach((btn) =>
       btn.addEventListener("click", async () => {
         const supabaseClient = window.supabase;
-
-        // Diagnostic logs
-    console.log("Supabase Client:", supabaseClient);
-    console.log("Supabase Auth:", supabaseClient?.auth);
-
         if (!supabaseClient) {
-          showMessage(btn.closest("form"), "Supabase client not found.");
+          showMessage(btn.closest("form"), "Supabase client not found.", "error");
           return;
         }
 
         const { error } = await supabaseClient.auth.signInWithOAuth({
           provider: 'google',
           options: {
-            redirectTo: window.location.origin + window.location.pathname
+            redirectTo: window.location.origin + "/index.html"
           }
         });
 
         if (error) {
-          showMessage(btn.closest("form"), error.message);
+          showMessage(btn.closest("form"), error.message, "error");
         }
       })
     );
 
-    $("forgotBtn").addEventListener("click", () =>
-      showMessage($("loginForm"), "Password reset isn't available yet.")
-    );
+    $("forgotBtn").addEventListener("click", () => {
+      if (forgotReady) window.FurifyForgot.open();
+      else if (forgotMissing.length) showMessage($("loginForm"), "Missing file: " + forgotMissing.join(" , ") + " (the browser could not open it).", "error");
+      else showMessage($("loginForm"), "Just a moment, loading...", "error");
+    });
+    loadForgot();
   }
 
-  /* ---------- open / close ---------- */
+  let forgotReady = false;
+  let forgotMissing = [];
+
+  function loadForgot() {
+    const cssLoaded = new Promise((done) => {
+      let link = document.querySelector('link[href*="forgot.css"]');
+      if (link) return done();
+      link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = FORGOT_CSS;
+      link.onload = () => done();
+      link.onerror = () => { forgotMissing.push(FORGOT_CSS); done(); };
+      document.head.appendChild(link);
+    });
+
+    const jsLoaded = window.FurifyForgot
+      ? Promise.resolve()
+      : new Promise((done) => {
+          const el = document.createElement("script");
+          el.src = FORGOT_JS;
+          el.onload = () => done();
+          el.onerror = () => { forgotMissing.push(FORGOT_JS); done(); };
+          document.head.appendChild(el);
+        });
+
+    const local = $("forgotTemplate");
+    const markup = local
+      ? Promise.resolve(local.innerHTML)
+      : fetch(FORGOT_HTML)
+          .then((r) => (r.ok ? r.text() : ""))
+          .then((text) => {
+            const tpl = new DOMParser().parseFromString(text, "text/html").getElementById("forgotTemplate");
+            return tpl ? tpl.innerHTML : "";
+          })
+          .catch(() => "");
+
+    Promise.all([cssLoaded, jsLoaded, markup]).then(([, , html]) => {
+      if (!html) forgotMissing.push("forgotTemplate in login.html");
+      if (!window.FurifyForgot || !html) {
+        if (!window.FurifyForgot && !forgotMissing.includes(FORGOT_JS)) forgotMissing.push(FORGOT_JS);
+        return;
+      }
+      card.insertAdjacentHTML("beforeend", html);
+      window.FurifyForgot.init({
+        card,
+        overlay,
+        isMobile,
+        loginForm: () => $("loginForm"),
+        clearMessages,
+        getBusy: () => busy,
+        setBusy: (v) => { busy = v; },
+      });
+      forgotReady = true;
+    });
+  }
+
   function openModal(mode = "login", opts = {}) {
     if (FurifyAuth.isLoggedIn()) return;
     build();
 
-    // if the Identify page's "no identifications left" popup is open, hide it
     const limitModal = $("limitModal");
     if (limitModal) limitModal.hidden = true;
 
     $("loginCoverText").textContent = opts.limit ? LIMIT_TEXT : DEFAULT_TEXT;
     clearMessages();
 
-    // set the starting side without animating
     card.classList.add("no-anim");
+    if (forgotReady) window.FurifyForgot.resetState();
+    busy = false;
     card.dataset.mode = mode === "signup" ? "signup" : "login";
     card.dataset.phase = "idle";
     void card.offsetWidth;
@@ -605,6 +649,7 @@
   function closeModal() {
     if (!overlay || closing || !overlay.classList.contains("is-open")) return;
     closing = true;
+    clearActiveTimer(); // Point 4: Clear active timeouts on close
 
     playClose().then(() => {
       overlay.classList.remove("is-open");
@@ -612,7 +657,6 @@
       unlockScroll();
       closing = false;
 
-      // login.html opened on its own has nothing behind it: go back
       if (standalone) {
         if (history.length > 1) history.back();
         else window.location.href = "index.html";
@@ -624,15 +668,11 @@
     if (e.key === "Escape" && overlay && overlay.classList.contains("is-open")) closeModal();
   });
 
-  /* ---------- the slide transition ----------
-     1. fur expands to cover the whole card (forms fade out)
-     2. content is swapped while it is covered
-     3. fur slides to the other half and the new form fades in */
   function switchTo(mode) {
     if (busy || card.dataset.mode === mode) return;
     clearMessages();
 
-    if (isMobile.matches) {            // no slide on phones
+    if (isMobile.matches) {
       card.dataset.mode = mode;
       return;
     }
@@ -642,7 +682,6 @@
 
     setTimeout(() => {
       card.dataset.mode = mode;
-      // wait two frames so the browser registers the swap first
       requestAnimationFrame(() =>
         requestAnimationFrame(() => {
           card.dataset.phase = "idle";
@@ -652,17 +691,22 @@
     }, COVER_MS);
   }
 
-  /* ---------- messages ---------- */
-  function showMessage(form, text) {
-    form.querySelector(".auth-msg").textContent = text;
+  /* ---------- Point 3: Message Styling Support ---------- */
+  function showMessage(form, text, type = "error") {
+    const msgEl = form.querySelector(".auth-msg");
+    if (!msgEl) return;
+    msgEl.textContent = text;
+    msgEl.className = `auth-msg ${type}`;
   }
 
   function clearMessages() {
     if (!card) return;
-    card.querySelectorAll(".auth-msg").forEach((el) => (el.textContent = ""));
+    card.querySelectorAll(".auth-msg").forEach((el) => {
+      el.textContent = "";
+      el.className = "auth-msg";
+    });
   }
 
-  /* ---------- validation ---------- */
   function validate(mode, data) {
     if (mode === "signup" && !data.name.trim()) return "Please enter your name.";
     if (!/^\S+@\S+\.\S+$/.test(data.email.trim())) return "Please enter a valid email address.";
@@ -670,19 +714,35 @@
     return "";
   }
 
-  /* ---------- submit ---------- */
+  /* ---------- Point 4: Timer Hygiene & Management ---------- */
+  let activeTimer = null;
+  function clearActiveTimer() {
+    if (activeTimer) {
+      clearTimeout(activeTimer);
+      activeTimer = null;
+    }
+  }
+
+  /* ---------- Submit Form Logic ---------- */
   function handleForm(form, mode) {
     const submitBtn = form.querySelector('button[type="submit"]');
-    const label = submitBtn.textContent;
+    const originalLabel = submitBtn.textContent;
+
+    // Point 6: Helper for button state resetting
+    const resetButton = () => {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalLabel;
+    };
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      showMessage(form, "");
+      clearMessages();
+      clearActiveTimer();
 
       const data = Object.fromEntries(new FormData(form));
       const problem = validate(mode, data);
       if (problem) {
-        showMessage(form, problem);
+        showMessage(form, problem, "error");
         return;
       }
 
@@ -691,37 +751,48 @@
 
       try {
         const { user } = await authRequest(mode, data);
-        FurifyAuth.login(user);
-        submitBtn.textContent = mode === "signup" ? "Account created!" : "Welcome back!";
+       
+        if (mode === "signup") {
+          submitBtn.textContent = "Check your email!";
+          showMessage(form, "Account created! Please check your email for the confirmation link.", "success");
 
-        setTimeout(() => {
+          activeTimer = setTimeout(() => {
+            form.reset();
+            resetButton();
+            
+            // Cleanly close the modal or send them to home instead of flipping to login
+            if (standalone) {
+              window.location.assign("index.html");
+            } else {
+              closeModal();
+            }
+          }, 3500);
+          return;
+        }
+
+        // --- FOR NORMAL LOGIN ---
+        FurifyAuth.login(user);
+        submitBtn.textContent = "Welcome back!";
+
+        activeTimer = setTimeout(() => {
           if (standalone) {
-            window.location.assign("identifyfur.html");
+            window.location.assign("index.html");
             return;
           }
-          // stay on the same page: close, show the user menu, tell the page
           closeModal();
           renderNav();
           document.dispatchEvent(new CustomEvent("furify:auth-change"));
           form.reset();
-          submitBtn.disabled = false;
-          submitBtn.textContent = label;
+          resetButton();
         }, 700);
+
       } catch (err) {
-        showMessage(form, err.message || "Something went wrong. Please try again.");
-        submitBtn.disabled = false;
-        submitBtn.textContent = label;
+        showMessage(form, err.message, "error");
+        resetButton();
       }
     });
   }
 
-  /* ==========================================================
-     Any link to login.html / signup.html opens the popup instead
-     (capture phase, so it also beats the page-transition script)
-       login.html                     -> log in
-       signup.html / login.html?mode=signup -> sign up
-       ...?from=limit                 -> "you've used all your free ..."
-     ========================================================== */
   document.addEventListener(
     "click",
     (e) => {
@@ -744,53 +815,6 @@
         match[1].toLowerCase() === "signup" || url.searchParams.get("mode") === "signup";
       openModal(wantsSignup ? "signup" : "login", { limit: url.searchParams.get("from") === "limit" });
     },
-    true
+    { capture: true }
   );
-
-  /* ---------- login.html opened directly: show the popup right away ---------- */
-  if (standalone) {
-    const params = new URLSearchParams(window.location.search);
-    openModal(params.get("mode") === "signup" ? "signup" : "login", {
-      limit: params.get("from") === "limit",
-    });
-  }
-
-
-/* ---------- SUPABASE SESSION SYNC (Google Redirect & Auth State) ---------- */
-  window.supabase?.auth?.getSession().then(({ data: { session } } = {}) => {
-    if (session && session.user) {
-      const sbUser = session.user;
-      const userMeta = sbUser.user_metadata || {};
-      const provider = sbUser.app_metadata?.provider || sbUser.identities?.[0]?.provider || "email";
-      const user = {
-        name: userMeta.name || userMeta.full_name || sbUser.email.split("@")[0],
-        email: sbUser.email,
-        photo: userMeta.avatar_url || userMeta.picture || null,
-        id: sbUser.id,
-        provider: provider === 'google' ? 'Google' : 'email'
-      };
-      write(USER_KEY, user);
-      renderNav();
-    }
-  });
-
-  window.supabase?.auth?.onAuthStateChange((event, session) => {
-    if (session && session.user) {
-      const sbUser = session.user;
-      const userMeta = sbUser.user_metadata || {};
-      const provider = sbUser.app_metadata?.provider || sbUser.identities?.[0]?.provider || "email";
-      const user = {
-        name: userMeta.name || userMeta.full_name || sbUser.email.split("@")[0],
-        email: sbUser.email,
-        photo: userMeta.avatar_url || userMeta.picture || null,
-        id: sbUser.id,
-        provider: provider === 'google' ? 'Google' : 'email'
-      };
-      write(USER_KEY, user);
-    } else if (event === 'SIGNED_OUT') {
-      try { localStorage.removeItem(USER_KEY); } catch {}
-    }
-    renderNav();
-  });
-
 })();
