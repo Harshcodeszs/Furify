@@ -54,9 +54,11 @@
   <main style="min-height: 70vh;"></main>
 
   <!--
-    FORGOT PASSWORD panel (4 steps). It sits in a <template> so it is invisible here;
-    js/auth.js copies it into the login popup on every page (on other pages it reads
-    it from this file). Design: css/pages/forgot.css   Logic + backend hooks: js/forgot.js
+    ==================== FORGOT PASSWORD (html) ====================
+    4 screens: email -> 6-digit code -> new password -> done.
+    It sits in a <template>, so it is invisible on this page. js/auth.js copies
+    it into the login popup (on every page; other pages read it from this file).
+    Design: css/pages/forgot.css    Logic + backend hooks: js/forgot.js
   -->
   <template id="forgotTemplate">
     <div class="auth-reset" id="authReset" aria-hidden="true">
@@ -102,8 +104,15 @@
         </span>
         <h1 class="auth-title">Set a New Password</h1>
         <p class="reset-sub">Choose a password you haven't used before. It must be at least 6 characters.</p>
-        <input class="auth-input" type="password" name="password" placeholder="New Password" autocomplete="new-password" required>
-        <input class="auth-input" type="password" name="confirm" placeholder="Confirm Password" autocomplete="new-password" required>
+        <div class="pw-field">
+          <input class="auth-input" type="password" name="password" placeholder="New Password" autocomplete="new-password" required>
+          <button type="button" class="pw-eye" aria-label="Show password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="eye-slash" d="M4 4l16 16"/></svg></button>
+        </div>
+        <div class="pw-meter" aria-hidden="true"><i></i><i></i><i></i><i></i><b class="pw-label"></b></div>
+        <div class="pw-field">
+          <input class="auth-input" type="password" name="confirm" placeholder="Confirm Password" autocomplete="new-password" required>
+          <button type="button" class="pw-eye" aria-label="Show password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="eye-slash" d="M4 4l16 16"/></svg></button>
+        </div>
         <p class="auth-msg" role="alert"></p>
         <button type="submit" class="btn-yellow">Update Password</button>
         <p class="reset-foot"><button type="button" class="reset-link" data-reset-back>Back to Log in</button></p>
@@ -112,7 +121,7 @@
       <!-- step 4: done -->
       <div class="reset-step" data-step-name="done">
         <span class="reset-badge is-ok">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8L16 9.8"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" pathLength="1"/><path d="m8 12.5 2.8 2.8L16 9.8" pathLength="1"/></svg>
         </span>
         <h1 class="auth-title">Password Updated</h1>
         <p class="reset-sub">Your password has been changed. You can now log in with your new password.</p>

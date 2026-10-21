@@ -19,9 +19,15 @@
   const CSS_FILE  = "css/pages/login.css";
   const FUR_IMAGE = "assets/image/fur.jpg";
 
-  /* forgot-password feature: its own css + js (the markup is in the popup below), loaded when the popup is first built */
-  const FORGOT_CSS  = "css/pages/forgot.css";
-  const FORGOT_JS   = "js/forgot.js";
+  /* forgot-password feature: its own css + js (the markup is in login.html), loaded when the popup is first built */
+  const FORGOT_HTML_REL = "login.html";   // the panel markup lives in <template id="forgotTemplate"> in this file
+  const FORGOT_CSS_REL = "css/pages/forgot.css";
+  const FORGOT_JS_REL  = "js/forgot.js";
+  // find forgot.js / forgot.css relative to THIS file (js/auth.js), so it works from any page or folder
+  const AUTH_URL = document.currentScript && document.currentScript.src;
+  const FORGOT_JS  = AUTH_URL ? new URL("forgot.js", AUTH_URL).href : FORGOT_JS_REL;
+  const FORGOT_HTML = AUTH_URL ? new URL("../login.html", AUTH_URL).href : FORGOT_HTML_REL;
+  const FORGOT_CSS = AUTH_URL ? new URL("../css/pages/forgot.css", AUTH_URL).href : FORGOT_CSS_REL;
 
   /* ---------- storage ---------- */
   const USER_KEY  = "furify_user";   // logged-in user  { name, email }
@@ -435,69 +441,6 @@
           <p class="cover-prompt">Already have an account?</p>
         </div>
       </div>
-
-      <!-- FORGOT PASSWORD panel: a white layer that covers the whole card.
-           Design: css/pages/forgot.css   Logic + backend hooks: js/forgot.js -->
-      <div class="auth-reset" id="authReset" aria-hidden="true">
-
-        <!-- step 1: email -->
-        <form class="reset-step is-active" data-step-name="email" novalidate>
-          <span class="reset-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
-          </span>
-          <h1 class="auth-title">Forgot Password?</h1>
-          <p class="reset-sub">Don't worry! Enter your email address and we'll send you a 6-digit recovery code to reset your password.</p>
-          <input class="auth-input" type="email" name="email" placeholder="Email Address" autocomplete="email" required>
-          <p class="auth-msg" role="alert"></p>
-          <button type="submit" class="btn-yellow">Send Recovery Code</button>
-          <p class="reset-foot">Remember your password? <button type="button" class="reset-link" data-reset-back>Back to Log in</button></p>
-        </form>
-
-        <!-- step 2: 6-digit code -->
-        <form class="reset-step" data-step-name="code" novalidate>
-          <span class="reset-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 8 8 5.5L20 8"/></svg>
-          </span>
-          <h1 class="auth-title">Check Your Email</h1>
-          <p class="reset-sub">We've sent a 6-digit recovery code to <strong id="resetEmailShown"></strong>. Enter it below to continue.</p>
-          <div class="code-row" role="group" aria-label="6-digit recovery code">
-            <input class="code-box" type="text" inputmode="numeric" autocomplete="one-time-code" aria-label="Digit 1">
-            <input class="code-box" type="text" inputmode="numeric" autocomplete="off" aria-label="Digit 2">
-            <input class="code-box" type="text" inputmode="numeric" autocomplete="off" aria-label="Digit 3">
-            <input class="code-box" type="text" inputmode="numeric" autocomplete="off" aria-label="Digit 4">
-            <input class="code-box" type="text" inputmode="numeric" autocomplete="off" aria-label="Digit 5">
-            <input class="code-box" type="text" inputmode="numeric" autocomplete="off" aria-label="Digit 6">
-          </div>
-          <p class="auth-msg" role="alert"></p>
-          <button type="submit" class="btn-yellow">Verify Code</button>
-          <p class="reset-foot">Didn't receive the code? <button type="button" class="reset-link" id="resendBtn">Resend Code</button></p>
-          <p class="reset-foot reset-foot-2"><button type="button" class="reset-link" data-reset-back>Back to Log in</button></p>
-        </form>
-
-        <!-- step 3: new password -->
-        <form class="reset-step" data-step-name="new" novalidate>
-          <span class="reset-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
-          </span>
-          <h1 class="auth-title">Set a New Password</h1>
-          <p class="reset-sub">Choose a password you haven't used before. It must be at least 6 characters.</p>
-          <input class="auth-input" type="password" name="password" placeholder="New Password" autocomplete="new-password" required>
-          <input class="auth-input" type="password" name="confirm" placeholder="Confirm Password" autocomplete="new-password" required>
-          <p class="auth-msg" role="alert"></p>
-          <button type="submit" class="btn-yellow">Update Password</button>
-          <p class="reset-foot"><button type="button" class="reset-link" data-reset-back>Back to Log in</button></p>
-        </form>
-
-        <!-- step 4: done -->
-        <div class="reset-step" data-step-name="done">
-          <span class="reset-badge is-ok">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8L16 9.8"/></svg>
-          </span>
-          <h1 class="auth-title">Password Updated</h1>
-          <p class="reset-sub">Your password has been changed. You can now log in with your new password.</p>
-          <button type="button" class="btn-yellow" data-reset-back>Back to Log in</button>
-        </div>
-      </div>
     </div>`;
 
   /* ---------- BACKEND HOOK: replace this with the real request ----------
@@ -633,10 +576,10 @@
       })
     );
 
-    // "Forgot Password?" -> the white reset panel (markup below / forgot.css / forgot.js)
+    // "Forgot Password?" -> the white reset panel (login.html template / forgot.css / forgot.js)
     $("forgotBtn").addEventListener("click", () => {
       if (forgotReady) window.FurifyForgot.open();
-      else if (forgotMissing.length) showMessage($("loginForm"), "Missing file: " + forgotMissing.join(", ") + ". Put it in that folder next to your other files.");
+      else if (forgotMissing.length) showMessage($("loginForm"), "Missing file: " + forgotMissing.join(" , ") + " (the browser could not open it). Upload it next to your other files.");
       else showMessage($("loginForm"), "Just a moment, loading...");
     });
     loadForgot();
@@ -668,12 +611,26 @@
           document.head.appendChild(el);
         });
 
-    Promise.all([cssLoaded, jsLoaded]).then(() => {
-      if (!window.FurifyForgot) {
-        if (!forgotMissing.includes(FORGOT_JS)) forgotMissing.push(FORGOT_JS);
-        console.warn("Forgot password: missing file(s):", forgotMissing.join(", "));
+    // the markup: already in the page on login.html, otherwise read it from login.html
+    const local = $("forgotTemplate");
+    const markup = local
+      ? Promise.resolve(local.innerHTML)
+      : fetch(FORGOT_HTML)
+          .then((r) => (r.ok ? r.text() : ""))
+          .then((text) => {
+            const tpl = new DOMParser().parseFromString(text, "text/html").getElementById("forgotTemplate");
+            return tpl ? tpl.innerHTML : "";
+          })
+          .catch(() => "");
+
+    Promise.all([cssLoaded, jsLoaded, markup]).then(([, , html]) => {
+      if (!html) forgotMissing.push("forgotTemplate in login.html");
+      if (!window.FurifyForgot || !html) {
+        if (!window.FurifyForgot && !forgotMissing.includes(FORGOT_JS)) forgotMissing.push(FORGOT_JS);
+        console.warn("Forgot password: missing:", forgotMissing.join(", "));
         return;
       }
+      card.insertAdjacentHTML("beforeend", html);
       window.FurifyForgot.init({
         card,
         overlay,

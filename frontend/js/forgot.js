@@ -54,6 +54,16 @@
       await pause(500);   // TODO: replace this line
     },
 
+//gamita ni para ma bypass ang new pass sa 6 digits code
+  /*  async verifyCode(email, code) {
+  // DEMO: accept "000000" to skip to new password screen (remove this in production)
+  if (code === "000000") {
+    await pause(500);
+    return;
+  }
+  await pause(500);   // TODO: replace this line with real Supabase call
+}, */
+
     /* TODO 3: save the new password (the code was checked in TODO 2).
        Supabase idea:
          const { error } = await window.supabase.auth.updateUser({ password });

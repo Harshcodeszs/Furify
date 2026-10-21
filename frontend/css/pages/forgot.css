@@ -193,6 +193,183 @@
   border-color: rgba(250, 187, 0, 0.55);
 }
 
+/* ==========================================================
+   Smoother motion + new password screen
+   ========================================================== */
+
+/* the screen itself only slides a little; its contents then float in one after another */
+.reset-step { translate: 18px 0; }
+.reset-step[data-pos="before"] { translate: -18px 0; }
+
+.reset-step > * {
+  opacity: 0;
+  translate: 0 10px;
+  transition: opacity 0.2s ease, translate 0.2s ease;
+}
+
+.auth-card[data-view="forgot"] .reset-step.is-active > * {
+  opacity: 1;
+  translate: 0 0;
+  transition:
+    opacity 0.45s ease calc(0.12s + var(--i, 0) * 0.055s),
+    translate 0.6s cubic-bezier(0.22, 1, 0.36, 1) calc(0.12s + var(--i, 0) * 0.055s);
+}
+
+/* first time only: wait for the white to land, then start the float-in */
+.auth-card[data-view="forgot"][data-enter] .reset-step.is-active > * {
+  transition-delay: calc(0.85s + var(--i, 0) * 0.055s);
+}
+
+.reset-step > :nth-child(1) { --i: 0; }
+.reset-step > :nth-child(2) { --i: 1; }
+.reset-step > :nth-child(3) { --i: 2; }
+.reset-step > :nth-child(4) { --i: 3; }
+.reset-step > :nth-child(5) { --i: 4; }
+.reset-step > :nth-child(6) { --i: 5; }
+.reset-step > :nth-child(7) { --i: 6; }
+.reset-step > :nth-child(8) { --i: 7; }
+.reset-step > :nth-child(9) { --i: 8; }
+
+/* the round badge pops in */
+@keyframes reset-pop {
+  from { scale: 0.55; }
+  to   { scale: 1; }
+}
+
+.auth-card[data-view="forgot"] .reset-step.is-active .reset-badge {
+  animation: reset-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.12s both;
+}
+
+.auth-card[data-view="forgot"][data-enter] .reset-step.is-active .reset-badge {
+  animation-delay: 0.85s;
+}
+
+/* wrong input: the fields give a small shake */
+@keyframes reset-shake {
+  0%, 100% { translate: 0 0; }
+  20% { translate: -6px 0; }
+  40% { translate: 5px 0; }
+  60% { translate: -3px 0; }
+  80% { translate: 2px 0; }
+}
+
+.reset-step.is-shake .auth-input,
+.reset-step.is-shake .code-row {
+  animation: reset-shake 0.4s ease;
+}
+
+/* ---------- new password: eye button + strength bars ---------- */
+.pw-field {
+  position: relative;
+  width: 100%;
+}
+
+.pw-field .auth-input {
+  padding-right: 50px;
+}
+
+.pw-eye {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 42px;
+  color: rgba(255, 255, 255, 0.7);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pw-eye:hover {
+  color: #fabb00;
+  transform: scale(1.12);
+}
+
+.pw-eye svg {
+  width: 17px;
+  height: 17px;
+}
+
+.pw-eye .eye-slash {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.pw-field.is-shown .eye-slash {
+  opacity: 1;
+}
+
+.pw-meter {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  height: 10px;
+  margin: -3px 0 9px;
+  padding: 0 8px;
+}
+
+.pw-meter i {
+  flex: 1;
+  height: 3px;
+  border-radius: 999px;
+  background: #e6e1db;
+  transition: background-color 0.35s ease;
+}
+
+.pw-meter[data-level="1"] i:nth-child(-n+1) { background: #e5533d; }
+.pw-meter[data-level="2"] i:nth-child(-n+2) { background: #f08a24; }
+.pw-meter[data-level="3"] i:nth-child(-n+3) { background: #fabb00; }
+.pw-meter[data-level="4"] i:nth-child(-n+4) { background: #3aa76d; }
+
+.pw-label {
+  min-width: 42px;
+  font: 600 8.5px "Poppins", system-ui, sans-serif;
+  text-align: right;
+  color: #000;
+}
+
+/* ---------- "Password Updated": the check draws itself ---------- */
+.reset-step[data-step-name="done"] .reset-badge svg circle,
+.reset-step[data-step-name="done"] .reset-badge svg path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0;
+}
+
+@keyframes reset-draw {
+  0%   { stroke-dashoffset: 1; opacity: 0; }
+  1%   { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 1; }
+}
+
+.auth-card[data-view="forgot"] .reset-step[data-step-name="done"].is-active .reset-badge svg circle {
+  animation: reset-draw 0.7s ease 0.35s forwards;
+}
+
+.auth-card[data-view="forgot"] .reset-step[data-step-name="done"].is-active .reset-badge svg path {
+  animation: reset-draw 0.45s ease 0.95s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reset-step,
+  .reset-step *,
+  .reset-badge {
+    animation: none !important;
+    transition-duration: 0.01s !important;
+    transition-delay: 0s !important;
+  }
+
+  .reset-step[data-step-name="done"] .reset-badge svg circle,
+  .reset-step[data-step-name="done"] .reset-badge svg path {
+    stroke-dashoffset: 0 !important;
+    opacity: 1 !important;
+  }
+}
+
 /* ---------- phones: no slide, the panel simply replaces the forms ---------- */
 @media (max-width: 760px) {
   .auth-card[data-view="forgot"] .auth-form {
@@ -231,5 +408,10 @@
   .code-box {
     width: 38px;
     height: 46px;
+  }
+
+  .auth-card[data-view="forgot"] .reset-step.is-active > *,
+  .reset-step > * {
+    translate: none;
   }
 }
