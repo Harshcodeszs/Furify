@@ -2,9 +2,9 @@
    js/forgot.js: "Forgot password" for the Furify login popup
 
    Files that make up this feature:
-     js/auth.js              the markup (RESET panel, inside the popup next to login + signup)
-     css/pages/forgot.css    the design + the white slide-over
-     js/forgot.js            this file: the flow + the BACKEND HOOKS
+      js/auth.js                the markup (RESET panel, inside the popup next to login + signup)
+      css/pages/forgot.css     the design + the white slide-over
+      js/forgot.js             this file: the flow + the BACKEND HOOKS
 
    js/auth.js loads this file and forgot.css by itself the first time the
    popup opens, then calls FurifyForgot.init(). Nothing to add to any page.
@@ -20,7 +20,7 @@
   let overlay = null;
 
   /* ==========================================================
-     FORGOT PASSWORD: the UI is done (slide, screens, 6-digit boxes,
+     FORGOT PASSWORD: the UI is done (slide, screens, 8-digit boxes,
      validation, resend timer, loading states).
 
      >>> BACKEND MATE: fill in the 3 functions of RecoveryAPI below. <<<
@@ -33,44 +33,44 @@
        - failure  -> throw new Error("message")  (the message is shown to the user)
      ========================================================== */
   const RESEND_SECONDS = 30;
-  const CODE_LENGTH = 6;
+  const CODE_LENGTH = 8;
   const pause = (ms) => new Promise((r) => setTimeout(r, ms));
 
   const RecoveryAPI = {
-    /* TODO 1: email a 6-digit code to `email`.
-       Tip: don't reveal whether the email has an account (return either way).
-       Supabase idea (the "Reset Password" email template must print {{ .Token }}):
-         const { error } = await window.supabase.auth.resetPasswordForEmail(email);
-         if (error) throw new Error(error.message);                                  */
+    /* TODO 1: email the code to `email`. */                                
     async sendCode(email) {
-      await pause(500);   // TODO: replace this line
+     const supabaseClient = window.supabase;
+      if (!supabaseClient) throw new Error("Supabase client not loaded.");
+
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + "/index.html"
+      });
+      if (error) throw new Error(error.message);
     },
 
-    /* TODO 2: check the 6-digit `code` for `email`.
-       Supabase idea (this also signs the user in):
-         const { error } = await window.supabase.auth.verifyOtp({ email, token: code, type: "recovery" });
-         if (error) throw new Error("Invalid or expired code.");                     */
+    /* TODO 2: check the code for `email`.           */
     async verifyCode(email, code) {
-      await pause(500);   // TODO: replace this line
+      const supabaseClient = window.supabase;
+      if (!supabaseClient) throw new Error("Supabase client not loaded.");
+
+      const { error } = await supabaseClient.auth.verifyOtp({
+        email: email.trim(),
+        token: code.trim(),
+        type: "recovery"
+      });
+      if (error) throw new Error("Invalid or expired code.");
     },
 
-    /* TODO 3: save the new password (the code was checked in TODO 2).
-       Supabase idea:
-         const { error } = await window.supabase.auth.updateUser({ password });
-         if (error) throw new Error(error.message);                                  */
+    /* TODO 3: save the new password (the code was checked in TODO 2).                  */
     async resetPassword({ email, code, password }) {
-      await pause(500);   // TODO: replace this line
-    },
+      const supabaseClient = window.supabase;
+      if (!supabaseClient) throw new Error("Supabase client not loaded.");
 
-    //gamita ni para ma bypass ang new pass sa 6 digits code
-  /*  async verifyCode(email, code) {
-  // DEMO: accept "000000" to skip to new password screen (remove this in production)
-  if (code === "000000") {
-    await pause(500);
-    return;
-  }
-  await pause(500);   // TODO: replace this line with real Supabase call
-}, */
+      const { error } = await supabaseClient.auth.updateUser({
+        password: password
+      });
+      if (error) throw new Error(error.message);
+    },
   };
 
   /* ---------- forgot-password UI ---------- */
@@ -242,7 +242,7 @@
       });
     });
 
-    /* ---- step 2: the 6 digit boxes ---- */
+    /* ---- step 2: the code boxes ---- */
     const codeForm = stepEl("code");
     const fillFrom = (start, digits) => {
       [...digits].slice(0, CODE_LENGTH - start).forEach((d, k) => { codeBoxes[start + k].value = d; });
@@ -250,7 +250,6 @@
       codeBoxes[Math.min(start + digits.length, CODE_LENGTH - 1)].focus();
     };
     codeBoxes.forEach((box, i) => {
-      // typing, pasting and the phone's "autofill code" all arrive here
       box.addEventListener("input", () => {
         const digits = box.value.replace(/\D/g, "");
         box.value = "";
@@ -278,7 +277,7 @@
     codeForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const code = codeBoxes.map((b) => b.value).join("");
-      if (code.length < CODE_LENGTH) return say(codeForm, "Enter all 6 digits of your code.");
+      if (code.length < CODE_LENGTH) return say(codeForm, `Enter all ${CODE_LENGTH} digits of your code.`);
 
       run(codeForm, "Checking...", async () => {
         await RecoveryAPI.verifyCode(reset.email, code);
@@ -299,7 +298,7 @@
         say(codeForm, "A new code is on its way.", true);
         startCooldown();
       } catch (err) {
-        say(codeForm, err.message || "Couldn't resend the code. Please try again.");
+        say(codeForm, err.message || "Couldn't resend the code. Please tag and try again.");
         resendBtn.disabled = false;
         resendBtn.textContent = "Resend Code";
       }
@@ -320,7 +319,6 @@
       });
     });
   }
-
 
   /* ---------- public API (used by auth.js) ---------- */
   window.FurifyForgot = {

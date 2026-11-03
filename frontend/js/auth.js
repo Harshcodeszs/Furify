@@ -16,14 +16,15 @@
   const CSS_FILE  = "css/pages/login.css";
   const FUR_IMAGE = "assets/image/fur.jpg";
 
-  /* forgot-password feature: its own css + js (the markup is in login.html), loaded when the popup is first built */
-  const FORGOT_HTML_REL = "login.html";   // the panel markup lives in <template id="forgotTemplate"> in this file
-  const FORGOT_CSS_REL = "css/pages/forgot.css";
-  const FORGOT_JS_REL  = "js/forgot.js";
+  /* ---------- forgot-password feature paths ---------- */
+  const FORGOT_HTML_REL = "/login.html";
+  const FORGOT_CSS_REL  = "/css/pages/forgot.css";
+  const FORGOT_JS_REL   = "/js/pages/forgot.js";
+
   const AUTH_URL = document.currentScript && document.currentScript.src;
-  const FORGOT_JS  = AUTH_URL ? new URL("forgot.js", AUTH_URL).href : FORGOT_JS_REL;
-  const FORGOT_HTML = AUTH_URL ? new URL("../login.html", AUTH_URL).href : FORGOT_HTML_REL;
-  const FORGOT_CSS = AUTH_URL ? new URL("../css/pages/forgot.css", AUTH_URL).href : FORGOT_CSS_REL;
+  const FORGOT_JS   = AUTH_URL ? new URL("/js/pages/forgot.js", AUTH_URL).href : FORGOT_JS_REL;
+  const FORGOT_HTML = AUTH_URL ? new URL("/login.html", AUTH_URL).href : FORGOT_HTML_REL;
+  const FORGOT_CSS  = AUTH_URL ? new URL("/css/pages/forgot.css", AUTH_URL).href : FORGOT_CSS_REL;
 
   /* ---------- storage ---------- */
   const USER_KEY  = "furify_user";   // logged-in user  { name, email }
@@ -775,15 +776,7 @@
         submitBtn.textContent = "Welcome back!";
 
         activeTimer = setTimeout(() => {
-          if (standalone) {
-            window.location.assign("index.html");
-            return;
-          }
-          closeModal();
-          renderNav();
-          document.dispatchEvent(new CustomEvent("furify:auth-change"));
-          form.reset();
-          resetButton();
+          window.location.assign("index.html");
         }, 700);
 
       } catch (err) {
