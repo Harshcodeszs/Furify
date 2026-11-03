@@ -6,6 +6,7 @@ from typing import Optional
 
 import torch
 import torch.nn as nn
+import httpx
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, UploadFile, Header, HTTPException
 from fastapi.staticfiles import StaticFiles
@@ -15,7 +16,24 @@ from supabase import create_client, Client
 from torchvision import models, transforms
 from torchvision.models import EfficientNet_B0_Weights
 
+from fastapi import Request
+
 app = FastAPI(title="Furify API")
+
+
+@app.middleware("http")
+async def add_csp_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://cdn.jsdelivr.net; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+        "font-src 'self' https://fonts.gstatic.com; "
+        "img-src 'self' data: blob: https://lh3.googleusercontent.com; "
+        "frame-src 'self' https://challenges.cloudflare.com; "
+        "connect-src 'self' data: https://challenges.cloudflare.com https://*.supabase.co https://hagen.challenges.cloudflare.com https://brunhild.challenges.cloudflare.com https://*.alg13.dnstest.challenges.cloudflare.com https://*.mldsa44.dnstest.challenges.cloudflare.com https://dnstest.dev https://ca2.cloudflarecaptcha.com https://ca1.cloudflarecaptcha.com;"
+    )
+    return response
 
 # --- PATH CONFIGURATION ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -28,12 +46,17 @@ load_dotenv(os.path.join(BASE_DIR, "..", ".env"))
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+CLOUDFLARE_SECRET_KEY = os.getenv("CLOUDFLARE_SECRET_KEY")
+
 if not SUPABASE_URL or not SUPABASE_SERVICE_ROLE_KEY:
     raise RuntimeError(
         "Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY "
         "(backend/.env locally, Render environment variables in production)."
     )
+if not CLOUDFLARE_SECRET_KEY:
+    print("Warning: CLOUDFLARE_SECRET_KEY is not set in environment variables.")
 # Service-role key bypasses RLS: it must stay on the server, never in frontend code.
+
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
 # --- SETTINGS ---
@@ -87,6 +110,27 @@ def format_info(breed):
         return info.get("description", "No description available.")
     return str(info)
 
+
+# --- TURNSTILE VERIFICATION HELPER ---
+def verify_turnstile(token: str) -> bool:
+    """Verifies the Cloudflare Turnstile token against Cloudflare's siteverify API."""
+    if not CLOUDFLARE_SECRET_KEY:
+        print("Error: CLOUDFLARE_SECRET_KEY is missing on the server.")
+        return False
+    try:
+        response = httpx.post(
+            "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+            data={
+                "secret": CLOUDFLARE_SECRET_KEY,
+                "response": token,
+            },
+            timeout=5.0,
+        )
+        result = response.json()
+        return result.get("success", False)
+    except Exception as err:
+        print(f"Turnstile validation request failed: {err}")
+        return False
 
 # --- SUPABASE HELPERS ---
 def resolve_user_id(authorization: Optional[str]) -> Optional[str]:
