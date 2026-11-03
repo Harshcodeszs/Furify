@@ -249,9 +249,18 @@
      IDENTIFY PHOTO (API Call)
      ========================================================== */
   async function identifyPhoto(file) {
+    const turnstileToken = document.querySelector('[name="cf-turnstile-response"]')?.value;
+
+   // turnstile token (if present) for bot protection
+    if (!turnstileToken) {
+      const err = new Error("Please complete the Cloudflare security verification.");
+      err.code = "turnstile_missing";
+      throw err;
+    }
+
     const form = new FormData();
     form.append("file", file);
-
+    form.append("cf_turnstile_response", turnstileToken);
     const headers = { "X-Scan-Source": scanSource };
 
     try {
@@ -344,6 +353,20 @@
 
       showResult(result);
     } catch (err) {
+      if (err.code === "turnstile_missing") {
+        if (window.Swal) {
+          Swal.fire({
+            icon: "warning",
+            title: "Security Verification Required",
+            text: err.message,
+            confirmButtonColor: "#3085d6",
+          });
+        } else {
+          alert(err.message);
+        }
+        return;
+      }
+
       if (err.code === "limit") {
         setFreeLeft(0);
         showLimit();

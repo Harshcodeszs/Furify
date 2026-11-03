@@ -7,6 +7,8 @@
 
   <title>Furify | Identify Fur</title>
 
+
+ 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,6 +22,8 @@
   <link rel="stylesheet" href="css/pages/identifyfur.css">
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
 </head>
 <body class="page-identify">
 
@@ -86,6 +90,8 @@
           <img class="dropzone-preview" id="previewImg" alt="Your dog photo" hidden>
         </div>
 
+        <div class="cf-turnstile" data-sitekey= "0x4AAAAAAFxokmwgOxcNitoB" style="margin: 15px 0; display: flex; justify-content: center;"></div>
+
         <!-- Identify + Remove buttons (appear once a photo is available) -->
         <div class="identify-action">
           <button type="button" class="btn btn-primary identify-btn" id="identifyBtn" hidden>
@@ -95,6 +101,8 @@
             Remove
           </button>
         </div>
+
+      
 
         <!-- hidden inputs (outside the dropzone so clicks don't bubble into it) -->
         <input type="file" id="fileInput" accept="image/*" hidden>
