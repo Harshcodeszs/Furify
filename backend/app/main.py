@@ -29,7 +29,7 @@ async def add_csp_headers(request: Request, call_next):
         "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://cdn.jsdelivr.net; "
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
         "font-src 'self' https://fonts.gstatic.com; "
-        "img-src 'self' data: blob: https://lh3.googleusercontent.com; "
+        "img-src 'self' data: blob: https://lh3.googleusercontent.com https://dcxhatflnbpfoiijomts.supabase.co; "
         "frame-src 'self' https://challenges.cloudflare.com; "
         "connect-src 'self' data: https://challenges.cloudflare.com https://*.supabase.co https://hagen.challenges.cloudflare.com https://brunhild.challenges.cloudflare.com https://*.alg13.dnstest.challenges.cloudflare.com https://*.mldsa44.dnstest.challenges.cloudflare.com https://dnstest.dev https://ca2.cloudflarecaptcha.com https://ca1.cloudflarecaptcha.com;"
     )
