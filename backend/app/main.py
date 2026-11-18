@@ -62,6 +62,7 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 # --- SETTINGS ---
 MAX_UPLOAD_BYTES = 10 * 1024 * 1024  # 10 MB
 CONFIDENCE_THRESHOLD = 0.35
+MIN_GAP = 0.15
 GUEST_SCAN_LIMIT = 3
 VALID_SCAN_SOURCES = ("Camera", "Upload")  # must match the scan.scan_source check constraint
 
@@ -325,11 +326,14 @@ def predict(
    # --- 5. SAVE ---
     save_scan(user_id, guest_device_id, scan_source, top3, image_bytes, detected_format)
 
-    # --- 6. STAGE 3: confidence cutoff ---
-    if confidence < CONFIDENCE_THRESHOLD:
+    # --- 6. STAGE 3: confidence + gap check ---
+    top2_confidence = top3[1]["confidence"]
+    gap = confidence - top2_confidence
+    # Allow for floating-point rounding at exactly the minimum gap.
+    if confidence < CONFIDENCE_THRESHOLD or gap < MIN_GAP - 1e-9:
         return {
             "status": "uncertain",
-            "message": f"⚠️ Dog detected, but breed identification is uncertain ({confidence:.1%}).",
+            "message": f"⚠️ Breed uncertain. Possibly mixed or unsupported breed. ({confidence:.1%}).",
             "breed": top_breed,
             "confidence": confidence,
             "top3": top3,
