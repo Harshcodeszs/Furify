@@ -1,0 +1,85 @@
+/* ==========================================================
+   pages/about.css — About Furify panel
+   ========================================================== */
+
+:root { --about-panel: #d7cabe; }
+
+/* page fills the screen so the footer sits at the bottom */
+body.page-about {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.about-main {
+  flex: 1;
+  padding: 32px 0 64px;
+}
+
+.about-panel {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px clamp(20px, 6vw, 60px) 44px;
+  border-radius: var(--radius-lg);
+  background: var(--about-panel);
+  box-shadow: var(--shadow);
+}
+
+.about-title {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.about-block + .about-block { margin-top: 22px; }
+
+.about-block h2 {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.about-block p,
+.about-block li {
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.about-block p + p,
+.about-block p + ul { margin-top: 10px; }
+
+.about-block ul {
+  padding-left: 1.4em;
+  list-style: disc;
+}
+
+.about-block li + li { margin-top: 2px; }
+
+.about-muted { color: #555; }
+.about-strong { font-weight: 600; }
+
+.about-cta {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 32px auto 0;
+  padding: 14px 40px;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+/* ---------- Blocks below the fold fade up as you reach them (added by about.js) ---------- */
+.about-block.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.8s ease, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.about-block.reveal.in-view { opacity: 1; transform: none; }
+
+@media (max-width: 520px) {
+  .about-main { padding: 20px 0 48px; }
+  .about-cta { padding: 14px 24px; border-radius: 28px; }
+}

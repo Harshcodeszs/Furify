@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Furify | Identify Your Pet's Breed</title>
+
+  <!-- Page-slide transitions (not deferred, so the direction is known before first paint) -->
+  <script src="js/transitions.js"></script>
+
+  <!-- Load the dog early so it never pops in during the slide -->
+  <link rel="preload" as="image" href="assets/image/goldenNoBG.png">
+
+  <!-- Stylesheets -->
+  <script src="js/auth.js" defer></script>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/transitions.css">
+  <link rel="stylesheet" href="css/pages/home.css">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+</head>
+<body>
+
+
+   <!-- ==================== google fonts ==================== -->
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bellota+Text&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Darumadrop+One&display=swap" rel="stylesheet">
+     <!-- ==================== NAVBAR ==================== -->
+  <nav class="navbar">
+    <div class="nav-logo">
+  <a href="index.html" class="logo">
+    <span class="logo-name">Furi<span class="logo-fy">fy</span></span>
+    <span class="logo-tagline">Discover your pet's breed.</span>
+  </a>
+</div>
+
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="identifyfur.html">Identify Fur</a></li>
+      <li><a href="history.html">History</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+    <div class="nav-auth">
+      <a href="login.html">Log in</a>
+      <span>|</span>
+      <a href="login.html?mode=signup">Sign up</a>
+    </div>
+  </nav>
+
+    <!-- ==================== HERO ==================== -->
+  <section class="hero">
+    <video class="hero-video" src="assets/video/indexBackground.mp4" autoplay muted loop playsinline></video>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>Find Your Pet's Breed</h1>
+      <p>Curious about your pet's breed? Upload a photo and let Furify identify it in seconds.</p>
+      <p>Easy to use. Simply upload a clear photo. Smart identification. Get breed matches with confidence scores.</p>
+      <p>Scroll down to learn how Furify works, or click "Get Started" to identify your pet now.</p>
+
+      <a class="btn btn-primary" href="identifyfur.html">Get Started</a>
+      <p class="hero-note">AI-powered dog breed identifier.</p>
+    </div>
+  </section>
+
+    <!-- ==================== DOG SECTION (dog swoops in, then the title) ==================== -->
+  <section class="dog-stage" id="dogStage" aria-labelledby="stageTitle">
+    <div class="stage-inner">
+      <div class="dog-wrap" id="dogWrap">
+        <img class="dog" id="dogImg" src="assets/image/goldenNoBG.png" alt="A happy dog leaping" decoding="async">
+      </div>
+
+      <div class="stage-copy">
+        <h2 class="stage-title" id="stageTitle">Tips For Better Dog Breed Identification</h2>
+        <p class="stage-sub">Curious about your dog's breed? Use these simple tips to help our AI identify your dog more accurately.</p>
+      </div>
+
+      <button type="button" class="scroll-hint" id="scrollHint">
+        <span>Scroll down</span>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+  </section>
+
+    <!-- ==================== TIPS SECTION ==================== -->
+  <section class="tips-section">
+  <div class="container">
+    <div class="tips-layout">
+      <!-- Left: cards + disclaimer -->
+      <div class="tips-left-col">
+        <div class="tips-grid">
+          <div class="tip-card">
+            <h3>Clear, Well-Lit Photos</h3>
+            <p>Use bright, clear photos. Avoid dark or blurry images.</p>
+          </div>
+          <div class="tip-card">
+            <h3>Face-Forward</h3>
+            <p>Show your dog's face clearly from the front.</p>
+          </div>
+          <div class="tip-card">
+            <h3>High Quality</h3>
+            <p>Use sharp photos that show fur, ears, and facial features.</p>
+          </div>
+          <div class="tip-card">
+            <h3>Full Body</h3>
+            <p>Include your dog's entire body to show its shape and size.</p>
+          </div>
+          <div class="tip-card">
+            <h3>Visible Features</h3>
+            <p>Make sure the eyes, nose, ears, and body are easy to see.</p>
+          </div>
+          <div class="tip-card">
+            <h3>Simple Background</h3>
+            <p>Use a clean background without people or other animals.</p>
+          </div>
+        </div>
+
+        <div class="tips-notice">
+          <p>Mixed-breed dogs can have traits from different breeds, so photo identification may not always be exact. Use clear photos for better results and consider DNA testing for confirmation.</p>
+        </div>
+      </div>
+
+      <!-- Right: image -->
+      <div class="tips-image">
+        <img src="assets/image/dogstudy.jpg" alt="Dog wearing glasses at a computer">
+        <p class="caption">"Better Photos, Better Results"</p>
+      </div>
+    </div>
+  </div>
+  <button type="button" class="scroll-hint" data-hint aria-label="Scroll down">
+      <span>Scroll down</span>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+</section>
+  <!-- ==================== HOW IT WORKS SECTION ==================== -->
+  <section class="how-it-works">
+    <div class="container">
+      <h2>How Furify Identifies Your Dog's Breed</h2>
+      <p class="section-subtitle">Curious about your dog's breed? Furify uses AI to analyze your dog's appearance and identify the breed based on its visible features. Here's how it works:</p>
+
+      <div class="how-layout">
+        <!-- Left: Steps -->
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-icon">1</div>
+            <div class="step-text">
+              <h3>1. Upload a Photo</h3>
+              <p>Upload a clear photo of your dog. Furify uses the image for breed identification.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-icon">2</div>
+            <div class="step-text">
+              <h3>2. AI Analysis</h3>
+              <p>Our AI analyzes visible features such as fur, ears, face, and body shape.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-icon">3</div>
+            <div class="step-text">
+              <h3>3. Breed Identification</h3>
+              <p>Furify compares these features with its breed database to find the closest matches.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-icon">4</div>
+            <div class="step-text">
+              <h3>4. View Your Results</h3>
+              <p>Get your predicted breed along with useful information about the identified breed.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: bulldog + magnifying glass + card (positioned by the script at the bottom) -->
+        <div class="how-image" id="howStage">
+          <div class="how-dog-pos">
+            <div class="how-dog-wrap">
+              <img class="how-dog" id="howDogImg" src="assets/image/bulldog.png" alt="A French bulldog" decoding="async">
+              <div class="how-lens" id="howLens" aria-hidden="true">
+                <div class="how-glass" id="howGlass">
+                  <img class="how-zoom" id="howZoom" src="assets/image/bulldog.png" alt="">
+                </div>
+                <img class="how-lens-img" id="howLensImg" src="assets/image/magnifying.png" alt="">
+              </div>
+            </div>
+          </div>
+          <div class="how-image-overlay how-card">
+            <h4>Built With Our Full Effort</h4>
+            <p>Furify's AI was developed and trained with dedication by our team using a wide range of dog images. We continuously improve the model to make breed identification more accurate and reliable.</p>
+            <a href="about.html" class="link-learn-more">Learn More About Furify →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="scroll-hint" data-hint aria-label="Scroll down">
+      <span>Scroll down</span>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+</section>
+   <!-- ==================== CTA SECTION ==================== -->
+  <section class="cta-section">
+    <div class="paw-trail" id="pawTrail" data-src="assets/image/paws.png" aria-hidden="true"></div>
+    <div class="container">
+      <div class="cta-card">
+        <h2>Ready to Identify Your Fur's Breed?</h2>
+        <p>Upload a photo of your dog and let Furify analyze its unique features to find the most likely breed.</p>
+        <a class="btn btn-primary" href="identifyfur.html">Get Started</a>
+        <p class="cta-note">You get 3 free identifications without an account. Register or log in to unlock more identifications.</p>
+      </div>
+    </div>
+  </section>
+
+   <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <!-- Left: Logo & Tagline -->
+      <div class="footer-brand">
+        <span class="logo-name">Furi<span class="logo-fy">fy</span></span>
+    <span class="logo-tagline">Identify your Fur now!</span>
+      </div>
+
+          <!-- Right: Social Icons -->
+      <div class="footer-social">
+        <a href="#"><img src="assets/icons/instagram.svg" alt="Instagram"></a>
+        <a href="#"><img src="assets/icons/x.svg" alt="X"></a>
+        <a href="#"><img src="assets/icons/facebook.svg" alt="Facebook"></a>
+      </div>
+    </div>
+     <div class="container footer-bottom">
+      <ul class="footer-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="identifyfur.html">Identify Fur</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+    <!-- Scripts -->
+<!-- 1. Load the Supabase client library from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+   <script>
+      const SUPABASE_URL = 'https://dcxhatflnbpfoiijomts.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_1aDTXQHlLis8DYvBBAG8_A__JstC65y';
+      window.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
+<script src="js/auth.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/pages/home.js" defer></script>
+</body>
+</html>

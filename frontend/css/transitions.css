@@ -1,0 +1,151 @@
+/* ==========================================================
+   transitions.css — page fade, page slide (js/transitions.js),
+   navbar animation (js/main.js)
+   ========================================================== */
+
+@keyframes page-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+body {
+  animation: page-in 0.4s ease both;
+}
+
+/* Hook for transitions.js: add .page-leaving to <body> before navigating */
+body.page-leaving {
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+/* ==================== NATIVE PAGE TRANSITIONS ====================
+   Chrome / Edge / Safari 18.2+: the browser holds the old page on screen until the new
+   one is ready, then slides between them (js/transitions.js sets html[data-slide]).
+   Other browsers ignore this block and use the JS slide further down.            */
+@view-transition { navigation: auto; }
+
+/* the native transition replaces the old per-page fade */
+html.vt body { animation: none; }
+
+/* the navbar is its own layer, so it stays still while the page slides */
+.navbar { view-transition-name: navbar; }
+::view-transition-group(navbar) { animation: none; }
+::view-transition-old(navbar)   { display: none; }
+::view-transition-new(navbar)   { animation: none; }
+
+html[data-slide="right"]::view-transition-old(root) { animation: nav-out-to-left   0.35s cubic-bezier(0.4, 0, 0.6, 1) both; }
+html[data-slide="right"]::view-transition-new(root) { animation: nav-in-from-right 0.7s  cubic-bezier(0.22, 1, 0.36, 1) both; }
+html[data-slide="left"]::view-transition-old(root)  { animation: nav-out-to-right  0.35s cubic-bezier(0.4, 0, 0.6, 1) both; }
+html[data-slide="left"]::view-transition-new(root)  { animation: nav-in-from-left  0.7s  cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}
+
+/* ==================== PAGE SLIDE (JS fallback) ====================
+   The navbar stays still; everything else slides.
+   "right" = going forward in the nav (Home > Identify Fur > History > About)
+   "left"  = going back                                                      */
+html.nav-enter-right,
+html.nav-enter-left,
+html.nav-exit-right,
+html.nav-exit-left {
+  overflow-x: hidden;
+  overflow-x: clip;               /* no sideways scrollbar while sliding */
+}
+
+/* set by transitions.js and never removed: stops the old page fade from replaying after the slide */
+html.nav-slid body { animation: none; }
+
+html.nav-enter-right body > :not(.navbar) { animation: nav-in-from-right 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+html.nav-enter-left  body > :not(.navbar) { animation: nav-in-from-left  0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+html.nav-exit-right  body > :not(.navbar) { animation: nav-out-to-left   0.28s cubic-bezier(0.55, 0, 0.8, 0.4) forwards; }
+html.nav-exit-left   body > :not(.navbar) { animation: nav-out-to-right  0.28s cubic-bezier(0.55, 0, 0.8, 0.4) forwards; }
+
+@keyframes nav-in-from-right { from { opacity: 0; transform: translateX(12vw); }  to { opacity: 1; transform: none; } }
+@keyframes nav-in-from-left  { from { opacity: 0; transform: translateX(-12vw); } to { opacity: 1; transform: none; } }
+@keyframes nav-out-to-left   { to   { opacity: 0; transform: translateX(-12vw); } }
+@keyframes nav-out-to-right  { to   { opacity: 0; transform: translateX(12vw); } }
+
+/* ==================== NAVBAR ANIMATION ==================== */
+.nav-links { position: relative; }
+
+/* inline-block so the text can drift / scale a little on hover */
+.nav-links a { display: inline-block; }
+
+/* hover line: thin, grows from where the cursor came in (js/main.js sets --ox) */
+.nav-links a::after {
+  height: 1px;
+  transform-origin: var(--ox, left);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* the page you are on: one thin line that glides between links.
+   js/transitions.js (in <head>) sets these variables to the previous page's spot,
+   js/main.js moves them to the new link, and the transition below does the gliding. */
+.nav-links::before {
+  content: "";
+  position: fixed;               /* exact screen position: same spot on every page */
+  top: 0;
+  left: 0;
+  width: var(--bar-w, 0px);
+  height: 1px;
+  background: var(--ink);
+  opacity: var(--bar-o, 0);
+  transform: translate3d(var(--bar-x, 0px), var(--bar-y, 0px), 0);
+  pointer-events: none;
+  transition:
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.3s ease;
+}
+.nav-links.no-anim::before { transition: none; }
+
+/* links: the page you are on is full strength, the others are a touch softer; hover brings them up */
+.nav-links a {
+  opacity: 0.78;
+  transition: opacity 0.5s ease;
+}
+.nav-links a.active,
+.nav-links a:hover,
+.nav-links a:focus-visible { opacity: 1; }
+
+/* Log in / Sign up: same soft line as the nav links instead of an abrupt underline */
+.nav-auth > a { position: relative; }
+.nav-auth > a:hover { text-decoration: none; }
+.nav-auth > a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: var(--ox, left);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.nav-auth > a:hover::after { transform: scaleX(1); }
+
+/* when the line is there, the per-link underline of the current page steps aside */
+.nav-links.has-bar a.active::after { display: none; }
+
+/* Tip cards respond to hover only (a reaction to the person's action) */
+.tip-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tip-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

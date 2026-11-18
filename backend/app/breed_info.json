@@ -1,0 +1,511 @@
+{
+  "Chihuahua": {
+    "life_expectancy": "14 - 16 years",
+    "description": "A tiny, confident, and alert companion known for its lively personality."
+    },
+
+  "Japanese Spaniel": {
+    "life_expectancy": "12 - 14 years",
+    "description": "An affectionate and charming toy breed with a distinctive oriental expression."
+  },
+  
+  "Maltese Dog": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A gentle and playful toy breed featuring a signature long, white silky coat."
+  },
+  "Pekinese": {
+    "life_expectancy": "12 - 14 years",
+    "description": "A regal and affectionate toy breed with a distinctive flat face and a proud, lion-like appearance."
+  },
+  "Shih-Tzu": {
+    "life_expectancy": "10 - 16 years",
+    "description": "A friendly small companion known for its long flowing coat and affectionate personality."
+  },
+  "Blenheim Spaniel": {
+    "life_expectancy": "10 - 14 years",
+    "description": "A gentle toy spaniel known for its affectionate nature and distinctive chestnut-and-white coat."
+  },
+  "Papillon": {
+    "life_expectancy": "14 - 16 years",
+    "description": "A lively and intelligent toy breed recognized by its large butterfly-shaped ears."
+  },
+  "Toy Terrier": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A small, energetic terrier known for its alert nature and compact athletic build."
+  },
+  "Rhodesian Ridgeback": {
+    "life_expectancy": "10 - 12 years",
+    "description": "A strong, athletic hound distinguished by the ridge of hair running along its back."
+  },
+  "Afghan Hound": {
+    "life_expectancy": "12 - 14 years",
+    "description": "An elegant, independent hound recognized for its long, flowing coat and graceful appearance."
+  },
+  "Basset": {
+    "life_expectancy": "10 - 12 years",
+    "description": "A short-legged scent hound known for its long ears, loose skin, and excellent sense of smell."
+  },
+  "Beagle": {
+    "life_expectancy": "10 - 15 years",
+    "description": "A cheerful and curious scent hound known for its excellent nose and friendly temperament."
+  },
+  "Bloodhound": {
+    "life_expectancy": "10 - 12 years",
+    "description": "A powerful scent hound famous for its exceptional tracking ability and distinctive wrinkled face."
+  },
+  "Bluetick": {
+    "life_expectancy": "11 - 12 years",
+    "description": "An energetic American scent hound recognized by its dark blue-speckled coat and strong tracking ability."
+  },
+  "Black-and-Tan Coonhound": {
+    "life_expectancy": "10 - 12 years",
+    "description": "A determined scent hound known for its black-and-tan coat and excellent tracking skills."
+  },
+
+  "Walker Hound": {
+    "life_expectancy": "12 - 13 years",
+    "description": "A fast and energetic American hunting hound known for its endurance and strong tracking instincts."
+  },
+  "English Foxhound": {
+    "life_expectancy": "10 - 13 years",
+    "description": "An athletic pack hound bred for endurance and known for its friendly and sociable nature."
+  },
+  "Redbone": {
+    "life_expectancy": "11 - 15 years",
+    "description": "An energetic, affectionate, and even-tempered hound recognized by its striking solid red coat."
+  },
+
+  "Borzoi": {
+    "life_expectancy": "10 - 14 years",
+    "description": "A large, elegant, and calm sighthound known for its slender build, long silky coat, and gentle, aristocratic demeanor."
+  },
+
+  "Irish Wolfhound": {
+    "life_expectancy": "6 - 8 years",
+    "description": "A majestic and massive sighthound known as the world's tallest dog breed, combining a gentle, patient, and affectionate temperament with quiet dignity."
+  },
+
+
+   "Italian Greyhound": {
+    "life_expectancy": "14 - 15 years",
+    "description": "A delicate and affectionate miniature sighthound known for its slender body and graceful movement."
+  },
+
+  "Whippet": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A graceful, medium-sized sighthound known for its incredible speed, athletic build, and gentle, affectionate, and quiet indoor demeanor."
+  },
+
+  
+  "Ibizan Hound": {
+    "life_expectancy": "12 - 14 years",
+    "description": "A graceful and athletic hound known for its tall ears, slender build, and hunting ability."
+  },
+ 
+  "Norwegian Elkhound": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A sturdy Nordic hunting dog known for its gray coat, endurance, and independent personality."
+  },
+  "Otterhound": {
+    "life_expectancy": "10 - 13 years",
+    "description": "A large, rugged hound with a rough coat, originally bred for hunting otters."
+  },
+  "Saluki": {
+    "life_expectancy": "12 - 14 years",
+    "description": "An ancient and graceful sighthound known for its speed, endurance, and elegant appearance."
+  },
+  "Scottish Deerhound": {
+    "life_expectancy": "8 - 11 years",
+    "description": "A tall and gentle sighthound originally bred to hunt deer, known for its wiry coat."
+  },
+  "Weimaraner": {
+    "life_expectancy": "10 - 13 years",
+    "description": "An athletic hunting dog recognized by its distinctive silver-gray coat and energetic nature."
+  },
+
+  "Staffordshire Bull Terrier": {
+    "life_expectancy": "12 - 14 years",
+    "description": "A muscular, medium-sized breed renowned for its courage, intelligence, and deep affection for people, particularly known for being gentle and loving with family."
+  },
+  "American Staffordshire Terrier": {
+    "life_expectancy": "12 - 16 years",
+    "description": "A muscular and confident companion known for its loyalty, strength, and affectionate nature."
+  },
+ 
+  "Bedlington Terrier": {
+    "life_expectancy": "14 - 16 years",
+    "description": "A graceful terrier with a distinctive lamb-like appearance and lively, affectionate personality."
+  },
+  "Border Terrier": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A hardy and energetic small terrier known for its wiry coat and friendly personality."
+  },
+
+  "Kerry Blue Terrier": {
+    "life_expectancy": "12 - 15 years",
+    "description": "An intelligent and spirited terrier easily recognized by its distinctive soft, wavy blue-gray coat and devoted, lively personality."
+  },
+  "Irish Terrier": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A bold, fiery, and affectionate red-coated terrier known for its courage, loyalty, and zest for life."
+  },
+
+  "Norfolk Terrier": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A small, fearless, and sturdy terrier with folded ears and a friendly, alert disposition."
+  },
+  "Norwich Terrier": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A small, energetic, and affectionate terrier very similar to the Norfolk, distinguished primarily by its erect, pointy ears."
+  },
+  "Yorkshire Terrier": {
+    "life_expectancy": "13 - 16 years",
+    "description": "A petite, feisty, and affectionate toy breed famous for its long, silky blue-and-tan coat and bold personality."
+  },
+"Wire-Haired Fox Terrier": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A bold, alert, and active terrier with a distinctive wiry coat and an enthusiastic, high-energy personality."
+  },
+  "Lakeland Terrier": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A confident, friendly, and sturdy working terrier known for its workmanlike frame and cheerful disposition."
+  },
+  "Sealyham Terrier": {
+    "life_expectancy": "12 - 14 years",
+    "description": "A calm, charming, and sturdy small terrier with a distinctive long white coat and a courageous yet relaxed attitude."
+  },
+  "Airedale": {
+    "life_expectancy": "11 - 14 years",
+    "description": "The largest of the terriers, known as the 'King of Terriers,' combining intelligence, courage, and a playful, athletic nature."
+  },
+  "Cairn": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A hardy, alert, and fearless small terrier with a shaggy coat, famous for its plucky and inquisitive nature."
+  },
+"Australian Terrier": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A small, spirited, and rugged working terrier featuring a weather-resistant coat and a confident, alert personality."
+  },
+  "Dandie Dinmont": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A distinctive, low-slung terrier easily recognized by its soft silky topknot and gentle, independent, yet affectionate nature."
+  },
+
+  "Boston Bull": {
+    "life_expectancy": "11 - 13 years",
+    "description": "A compact American companion known for its tuxedo-like coat and lively, friendly personality."
+  },
+
+  "Miniature Schnauzer": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A lively and intelligent small dog recognized by its bushy eyebrows, beard, and wiry coat."
+  },
+   "Giant Schnauzer": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A powerful and intelligent working dog known for its strong build and distinctive beard."
+  },
+
+  "Standard Schnauzer": {
+    "life_expectancy": "13 - 16 years",
+    "description": "A versatile and intelligent working breed known for its wiry coat and distinctive facial furnishings."
+  },
+  "Scotch Terrier": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A confident Scottish terrier known for its compact build, wiry coat, and independent character."
+  },
+
+  "Tibetan Terrier": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A medium-sized, sturdy companion dog with a heavy double coat, historically revered in Tibet as a lucky talisman, known for an affectionate, sensitive, and lively personality."
+  },
+  "Silky Terrier": {
+    "life_expectancy": "13 - 15 years",
+    "description": "A small, active toy terrier featuring a long, straight, shimmering blue-and-tan coat, combining a feisty, alert spirit with a deeply affectionate nature."
+  },
+  "Soft-Coated Wheaten Terrier": {
+    "life_expectancy": "10 - 12 years",
+    "description": "A joyful, spirited, and deeply affectionate medium-sized terrier known for its silky, low-shedding soft coat and exuberant, friendly personality."
+  },
+  "West Highland White Terrier": {
+    "life_expectancy": "12 - 16 years",
+    "description": "A small, confident, and hardy terrier recognized by its bright white double coat and cheerful, self-assured disposition."
+  },
+  "Lhasa": {
+    "life_expectancy": "12 - 15 years",
+    "description": "An ancient, alert, and confident companion dog originating from Tibet, featuring a long, flowing coat and a fiercely loyal yet dignified personality."
+  },
+  "Flat-Coated Retriever": {
+    "life_expectancy": "8 - 10 years",
+    "description": "A bright, exuberant, and optimistic gundog known for its sleek black or liver coat, perpetual puppy-like attitude, and loving nature."
+  },
+  "Curly-Coated Retriever": {
+    "life_expectancy": "10 - 12 years",
+    "description": "The oldest of the retriever breeds, distinguished by its tight, crisp curls covering its body and a proud, intelligent, and independent working nature."
+  },
+
+  "Golden Retriever": {
+    "life_expectancy": "10 - 12 years",
+    "description": "A large, intelligent, friendly, and devoted gundog renowned for its beautiful golden coat and gentle, eager-to-please temperament."
+  },
+  "Labrador Retriever": {
+    "life_expectancy": "10 - 12 years",
+    "description": "One of the most popular dog breeds worldwide, known for its friendly, outgoing, and high-energy personality, intelligent mind, and loyal companionship."
+  },
+
+  "Chesapeake Bay Retriever": {
+    "life_expectancy": "10 - 13 years",
+    "description": "A powerful, intelligent, and affectionate gundog known for its waterproof wavy coat and exceptional retrieving drive in icy waters."
+  },
+  "German Short-Haired Pointer": {
+    "life_expectancy": "10 - 12 years",
+    "description": "An enthusiastic, versatile, and highly energetic hunting dog with a noble appearance, keen intelligence, and deep loyalty to its family."
+  },
+  "Vizsla": {
+    "life_expectancy": "10 - 14 years",
+    "description": "A sleek, rust-colored, affectionate pointer known as a 'velcro dog' for its intense loyalty, high energy, and gentle demeanor."
+  },
+  "English Setter": {
+    "life_expectancy": "10 - 12 years",
+    "description": "An elegant, gentle, and friendly gundog recognized by its distinctive speckled coat and calm, people-loving personality."
+  },
+  "Irish Setter": {
+    "life_expectancy": "11 - 13 years",
+    "description": "A lively, graceful, and outgoing gundog famous for its rich mahogany or chestnut coat and playful, affectionate nature."
+  },
+  "Gordon Setter": {
+    "life_expectancy": "10 - 12 years",
+    "description": "The largest of the setter breeds, distinguished by a striking black-and-tan coat, bold intellect, and devoted, steady loyalty."
+  },
+
+  "Brittany Spaniel": {
+    "life_expectancy": "12 - 14 years",
+    "description": "An agile, energetic, and bright gundog known for its eagerness to work, cheerful disposition, and distinctive rust-and-white or orange-and-white coat."
+  },
+  "Clumber Spaniel": {
+    "life_expectancy": "10 - 12 years",
+    "description": "The largest of the spaniels, distinguished by its heavy bone structure, massive thoughtful head, white coat with lemon or orange markings, and gentle, dignified demeanor."
+  },
+  "English Springer Spaniel": {
+    "life_expectancy": "12 - 14 years",
+    "description": "An affectionate, eager-to-please, and versatile gundog with beautiful feathered ears and a joyful, high-energy disposition."
+  },
+  "Welsh Springer Spaniel": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A striking red-and-white spaniel known for its stamina, friendly nature, and deep devotion to family members."
+  },
+  "Cocker Spaniel": {
+    "life_expectancy": "10 - 14 years",
+    "description": "A compact, merry, and trusting sporting dog featuring expressive eyes, long silky ears, and a gentle, happy-go-lucky personality."
+  },
+  "Sussex Spaniel": {
+    "life_expectancy": "11 - 13 years",
+    "description": "A rare, deep golden-liver colored spaniel with a rolling gait, known for being calm, steady, and affectionate."
+  },
+  "Irish Water Spaniel": {
+    "life_expectancy": "10 - 12 years",
+    "description": "The tallest of the spaniels, easily recognized by its crisp liver-colored curls and smooth 'rat tail,' combining a playful clownish personality with tireless working drive."
+  },
+  "Kuvasz": {
+    "life_expectancy": "10 - 12 years",
+    "description": "A large, ancient Hungarian working dog featuring a dense white coat, fiercely loyal guardian instincts, and a noble, intelligent presence."
+  },
+  "Schipperke": {
+    "life_expectancy": "13 - 15 years",
+    "description": "A small, fox-like Belgian spitz with a thick black coat, boundless curiosity, and a fearless, inquisitive 'little black fox' personality."
+  },
+
+  "Belgian Sheepdog": {
+    "life_expectancy": "10 - 14 years",
+    "description": "An elegant, intelligent, and hardworking herding dog distinguished by its long, solid black coat and intense loyalty to its family."
+  },
+  "Malinois": {
+    "life_expectancy": "14 - 16 years",
+    "description": "A high-drive, intensely intelligent, and athletic herding breed renowned for its work ethic, versatility, and exceptional performance in police and military roles."
+  },
+  "Briard": {
+    "life_expectancy": "10 - 12 years",
+    "description": "A large, ancient French herding breed recognized by its wavy coat, protective spirit, and deeply loyal, affectionate nature."
+  },
+  "Kelpie": {
+    "life_expectancy": "10 - 13 years",
+    "description": "An exceptionally agile, tireless, and intelligent Australian working dog built for endurance and focused herding tasks."
+  },
+  "Komondor": {
+    "life_expectancy": "10 - 12 years",
+    "description": "A powerful Hungarian livestock guardian dog instantly recognizable by its striking, heavy white corded coat and fearless protective instincts."
+  },
+  "Old English Sheepdog": {
+    "life_expectancy": "10 - 12 years",
+    "description": "A large, adaptable, and playful herding dog famous for its shaggy, abundant grey-and-white coat and clownish, affectionate personality."
+  },
+  "Shetland Sheepdog": {
+    "life_expectancy": "12 - 14 years",
+    "description": "A small, highly intelligent, and responsive herding dog resembling a miniature Rough Collie, known for its vocal enthusiasm and deep devotion."
+  },
+
+  "Collie": {
+    "life_expectancy": "12 - 14 years",
+    "description": "An elegant, highly intelligent, and loyal herding dog known for its expressive face, gentle nature, and either a rough or smooth coat."
+  },
+  "Border Collie": {
+    "life_expectancy": "12 - 15 years",
+    "description": "Widely regarded as the world's most intelligent dog breed, possessing boundless energy, intense focus, and a strong drive for herding and agility work."
+  },
+  "Bouvier des Flandres": {
+    "life_expectancy": "10 - 12 years",
+    "description": "A powerful, compact, and fearless European herding and farm dog with a rugged double coat, gentle family loyalty, and a calm demeanor."
+  },
+  "Rottweiler": {
+    "life_expectancy": "9 - 10 years",
+    "description": "A robust, powerful, and confident working breed featuring a distinctive black-and-tan coat, renowned for its unwavering loyalty and protective guardian instincts."
+  },
+  "German Shepherd": {
+    "life_expectancy": "9 - 13 years",
+    "description": "A remarkably versatile, courageous, and intelligent working dog celebrated for its loyalty, trainability, and excellence in service and protection roles."
+  },
+  "Doberman": {
+    "life_expectancy": "10 - 13 years",
+    "description": "A sleek, powerful, and lightning-fast guardian dog combining speed, endurance, high intelligence, and deep devotion to its family."
+  },
+  "Miniature Pinscher": {
+    "life_expectancy": "12 - 16 years",
+    "description": "A spirited, fearless, and compact toy breed characterized by a proud, hackney-like gait and boundless energy."
+  },
+
+  "Greater Swiss Mountain Dog": {
+    "life_expectancy": "8 - 11 years",
+    "description": "A large, powerful, and confident draft dog featuring a striking black, white, and tan coat and a dependable, eager-to-please temperament."
+  },
+  "Bernese Mountain Dog": {
+    "life_expectancy": "7 - 10 years",
+    "description": "A large, sturdy, and strikingly tri-colored Swiss farm dog known for its gentle, affectionate nature and calm loyalty toward family."
+  },
+  "Appenzeller": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A lively, agile, and tireless Swiss cattle dog with a distinct tri-color coat, high energy, and sharp intelligence."
+  },
+  "Entlebucher": {
+    "life_expectancy": "11 - 13 years",
+    "description": "The smallest of the Swiss mountain dogs, characterized by a compact, muscular build, keen alertness, and a fiercely loyal, enthusiastic personality."
+  },
+  "Boxer": {
+    "life_expectancy": "10 - 12 years",
+    "description": "An upbeat, playful, and energetic working dog known for its distinctive square jaw, expressive face, and deep loyalty to children and family."
+  },
+  "Bull Mastiff": {
+    "life_expectancy": "8 - 10 years",
+    "description": "A powerful, courageous, and quiet family guardian built with immense strength and loyalty, balancing a formidable presence with a gentle home demeanor."
+  },
+
+  "Tibetan Mastiff": {
+    "life_expectancy": "10 - 12 years",
+    "description": "A massive, ancient guardian breed featuring a heavy, imposing mane around the neck, combining a fierce protective instinct with a calm, aloof, and loyal family disposition."
+  },
+  "French Bulldog": {
+    "life_expectancy": "10 - 12 years",
+    "description": "A small, muscular companion dog with signature 'bat ears' and an affectionate, easygoing, and playful personality well-suited for urban living."
+  },
+  "Great Dane": {
+    "life_expectancy": "7 - 10 years",
+    "description": "A giant, majestic breed known as the 'Apollo of Dogs,' combining immense stature and noble grace with a gentle, patient, and friendly giant temperament."
+  },
+  "Saint Bernard": {
+    "life_expectancy": "8 - 10 years",
+    "description": "A massive, powerful working dog famous for its historical alpine rescue efforts, recognized by its gentle expression, patience, and deep devotion to family."
+  },
+  "Eskimo Dog": {
+    "life_expectancy": "10 - 13 years",
+    "description": "A sturdy, alert, and friendly arctic working dog characterized by a thick white coat, pricked ears, and an intelligent, eager-to-please nature."
+  },
+  "Malamute": {
+    "life_expectancy": "10 - 14 years",
+    "description": "A powerful, heavily-boned arctic sled dog built for strength and endurance, combining a dignified, loyal demeanor with an affectionate, playful spirit."
+  },
+  "Siberian Husky": {
+    "life_expectancy": "12 - 14 years",
+    "description": "A graceful and energetic working sled dog renowned for its striking blue or multicolored eyes, thick arctic coat, and friendly, outgoing, and independent personality."
+  },
+
+  "Affenpinscher": {
+    "life_expectancy": "12 - 14 years",
+    "description": "A small, fearless toy breed with a distinctive monkey-like facial expression, famous for its confident, adventurous, and comical personality."
+  },
+  "Basenji": {
+    "life_expectancy": "13 - 14 years",
+    "description": "An ancient, elegant hunting dog known as the 'barkless dog,' recognized for its wrinkled brow, tightly curled tail, and cat-like independence."
+  },
+  "Pug": {
+    "life_expectancy": "13 - 15 years",
+    "description": "A charming and mischievous toy breed featuring deep facial wrinkles, a curled tail, and an affectionate, even-tempered disposition."
+  },
+  "Leonberger": {
+    "life_expectancy": "7 - 10 years",
+    "description": "A giant, gentle mountain dog with a lion-like mane, recognized for its striking appearance, profound intelligence, and serene, loving family nature."
+  },
+  "Newfoundland": {
+    "life_expectancy": "9 - 10 years",
+    "description": "A massive, sweet-tempered working dog renowned for its incredible swimming ability, waterproof coat, and heroic lifesaving instincts."
+  },
+  "Great Pyrenees": {
+    "life_expectancy": "10 - 12 years",
+    "description": "A majestic and powerful livestock guardian dog featuring a thick white coat, calm demeanor, and fierce, protective loyalty toward its family."
+  },
+  "Samoyed": {
+    "life_expectancy": "12 - 14 years",
+    "description": "A striking arctic herding dog famous for its permanent 'Samy smile,' plush white coat, and friendly, gentle, and mischievous spirit."
+  },
+
+  "Pomeranian": {
+    "life_expectancy": "12 - 16 years",
+    "description": "A tiny, extroverted toy breed featuring a lush, fluffy double coat, fox-like face, and a lively, bold, and affectionate personality."
+  },
+  "Chow": {
+    "life_expectancy": "8 - 12 years",
+    "description": "An ancient and dignified northern Chinese breed known for its distinctive blue-black tongue, deep-set scowling expression, lion-like mane, and fiercely loyal yet aloof demeanor."
+  },
+  "Keeshond": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A medium-sized spitz dog with a plush silver-and-black coat, expressive 'spectacle' facial markings, and an outgoing, friendly, and affectionate family nature."
+  },
+  "Brussels Griffon": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A small, expressive toy breed with a human-like beard and whiskers, known for its alert intelligence and big-dog attitude."
+  },
+  "Pembroke": {
+    "life_expectancy": "12 - 15 years",
+    "description": "A spirited and affectionate herding dog distinguished by its short stature, lack of a long tail, and bold, big-hearted personality."
+  },
+  "Cardigan": {
+    "life_expectancy": "12 - 15 years",
+    "description": "An ancient Welsh herding dog featuring a long body, sturdy bone structure, large alert ears, and a full tail, known for its loyal and steady temperament."
+  },
+
+  "Toy Poodle": {
+    "life_expectancy": "10 - 18 years",
+    "description": "An exceptionally intelligent, proud, and active toy companion possessing a hypoallergenic curly coat and an eager-to-please personality."
+  },
+  "Miniature Poodle": {
+    "life_expectancy": "10 - 18 years",
+    "description": "A sturdy, highly intelligent, and versatile athletic dog featuring a dense, curly coat and a lively, affectionate temperament."
+  },
+  "Standard Poodle": {
+    "life_expectancy": "10 - 18 years",
+    "description": "A magnificent, highly intelligent, and athletic utility dog known for its proud posture, hypoallergenic coat, and exceptional trainability."
+  },
+  "Mexican Hairless": {
+    "life_expectancy": "12 - 15 years",
+    "description": "Also known as the Xoloitzcuintli, an ancient and loyal companion breed prized for its smooth hairless skin, calm demeanor, and alert guardian instincts."
+  },
+  "Dingo": {
+    "life_expectancy": "10 - 14 years",
+    "description": "Australia's iconic free-ranging wild canine, recognized for its agility, keen survival instincts, and independent, cautious nature."
+  },
+  "Dhole": {
+    "life_expectancy": "10 - 13 years",
+    "description": "An endangered wild Asian canid known for its social pack structure, reddish coat, and distinct whistling communication calls."
+  },
+  "African Hunting Dog": {
+    "life_expectancy": "10 - 12 years",
+    "description": "Also known as the African wild dog, a highly cooperative and endurance-adapted carnivore featuring a striking multicolored mottled coat and large rounded ears."
+  }
+  }
