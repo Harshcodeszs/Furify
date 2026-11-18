@@ -251,7 +251,7 @@
   async function identifyPhoto(file) {
     const turnstileToken = document.querySelector('[name="cf-turnstile-response"]')?.value;
 
-   // turnstile token (if present) for bot protection
+    // Every prediction requires a fresh token verified by the backend.
     if (!turnstileToken) {
       const err = new Error("Please complete the Cloudflare security verification.");
       err.code = "turnstile_missing";
@@ -281,10 +281,21 @@
       headers["X-Guest-Device-ID"] = guestId;
     }
 
-    const res = await fetch("/api/predict", { method: "POST", headers, body: form });
+    let res;
+    try {
+      res = await fetch("/api/predict", { method: "POST", headers, body: form });
+    } finally {
+      // Tokens are single-use; a failed request may also have consumed the token.
+      const widget = document.querySelector(".cf-turnstile");
+      if (window.turnstile && widget) {
+        window.turnstile.reset(widget);
+      }
+    }
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.detail || "Identification failed");
+      const error = new Error(err.detail || "Identification failed");
+      if (res.status === 403) error.code = "turnstile_missing";
+      throw error;
     }
     const data = await res.json();
 

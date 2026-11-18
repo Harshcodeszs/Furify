@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 import httpx
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, UploadFile, Header, HTTPException
+from fastapi import FastAPI, File, Form, UploadFile, Header, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from PIL import Image, ImageOps
@@ -126,8 +126,9 @@ def verify_turnstile(token: str) -> bool:
             },
             timeout=5.0,
         )
+        response.raise_for_status()
         result = response.json()
-        return result.get("success", False)
+        return result.get("success") is True
     except Exception as err:
         print(f"Turnstile validation request failed: {err}")
         return False
@@ -239,11 +240,19 @@ def save_scan(user_id, guest_device_id, scan_source, top3, image_bytes, image_fo
 @app.post("/api/predict")
 def predict(
     file: UploadFile = File(...),
+    cf_turnstile_response: str = Form(""),
     guest_device_id: Optional[str] = Header(None, alias="X-Guest-Device-ID"),
     scan_source: str = Header("Upload", alias="X-Scan-Source"),
     authorization: Optional[str] = Header(None),
 ):
-    
+    # Verify before authentication/database calls, image decoding, or AI inference.
+    token = cf_turnstile_response.strip()
+    if not token or not verify_turnstile(token):
+        raise HTTPException(
+            status_code=403,
+            detail="Security verification failed or expired. Please complete the verification again and retry.",
+        )
+
     # --- 1. WHO IS THIS? (logged-in user or guest) ---
     user_id = resolve_user_id(authorization)
     if scan_source not in VALID_SCAN_SOURCES:
