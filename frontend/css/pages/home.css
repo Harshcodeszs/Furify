@@ -10,6 +10,7 @@
   min-height: 420px;
   overflow: hidden;
   color: var(--white);
+  background: #554c40 url("../../assets/image/hero-poster.jpg") center / cover no-repeat;
 }
 
 .hero-video {
@@ -19,6 +20,10 @@
   height: 100%;
   object-fit: cover;
   z-index: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-video { display: none; }
 }
 
 .hero-overlay {
@@ -448,10 +453,16 @@ html.no-snap { scroll-snap-type: none; }
   height: min(83%, 44vw);
   display: flex;
   justify-content: center;
-  opacity: 0;                     /* hidden until the slide starts */
-  transform: translateX(-115vw);
+  opacity: 1;
+  transform: none;
   will-change: transform, opacity, filter;
 }
+
+.js .dog-wrap {
+  opacity: 0;
+  transform: translateX(-115vw);
+}
+.js .dog-stage.is-in .dog-wrap { opacity: 1; transform: none; }
 
 .dog {
   height: 100%;
@@ -581,6 +592,7 @@ html.no-snap { scroll-snap-type: none; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-snap-type: none; }
   .js .reveal { opacity: 1; transform: none; transition: none; }
+  .js .dog-wrap { opacity: 1; transform: none; }
   .stage-title .ch, .stage-sub { transition: none; }
 }
 /* ==========================================================
