@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Furify | Identify Your Pet's Breed</title>
 
+  <!-- Prioritize the visible hero frame rather than the dog in the next section. -->
+  <link rel="preload" as="image" href="assets/image/hero-poster.jpg" fetchpriority="high">
+
   <!-- Page-slide transitions (not deferred, so the direction is known before first paint) -->
   <script src="js/transitions.js"></script>
-
-  <!-- Load the dog early so it never pops in during the slide -->
-  <link rel="preload" as="image" href="assets/image/goldenNoBG.png">
 
   <!-- Stylesheets -->
   <script src="js/auth.js" defer></script>
@@ -51,7 +51,9 @@
 
     <!-- ==================== HERO ==================== -->
   <section class="hero">
-    <video class="hero-video" src="assets/video/indexBackground.mp4" autoplay muted loop playsinline></video>
+    <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="assets/image/hero-poster.jpg" aria-hidden="true">
+      <source src="assets/video/indexBackground.sharp.mp4" type="video/mp4" media="(prefers-reduced-motion: no-preference)">
+    </video>
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <h1>Find Your Pet's Breed</h1>
@@ -68,7 +70,7 @@
   <section class="dog-stage" id="dogStage" aria-labelledby="stageTitle">
     <div class="stage-inner">
       <div class="dog-wrap" id="dogWrap">
-        <img class="dog" id="dogImg" src="assets/image/goldenNoBG.png" alt="A happy dog leaping" decoding="async">
+        <img class="dog" id="dogImg" src="assets/image/goldenNoBG-home.webp" alt="A happy dog leaping" decoding="async" loading="eager">
       </div>
 
       <div class="stage-copy">
@@ -123,7 +125,7 @@
 
       <!-- Right: image -->
       <div class="tips-image">
-        <img src="assets/image/dogstudy.jpg" alt="Dog wearing glasses at a computer">
+        <img src="assets/image/dogstudy.jpg" alt="Dog wearing glasses at a computer" loading="lazy" decoding="async">
         <p class="caption">"Better Photos, Better Results"</p>
       </div>
     </div>
@@ -176,12 +178,12 @@
         <div class="how-image" id="howStage">
           <div class="how-dog-pos">
             <div class="how-dog-wrap">
-              <img class="how-dog" id="howDogImg" src="assets/image/bulldog.png" alt="A French bulldog" decoding="async">
+              <img class="how-dog" id="howDogImg" src="assets/image/bulldog-home.webp" alt="A French bulldog" decoding="async" loading="lazy">
               <div class="how-lens" id="howLens" aria-hidden="true">
                 <div class="how-glass" id="howGlass">
-                  <img class="how-zoom" id="howZoom" src="assets/image/bulldog.png" alt="">
+                  <img class="how-zoom" id="howZoom" src="assets/image/bulldog-home.webp" alt="" loading="lazy">
                 </div>
-                <img class="how-lens-img" id="howLensImg" src="assets/image/magnifying.png" alt="">
+                <img class="how-lens-img" id="howLensImg" src="assets/image/magnifying-home.webp" alt="" loading="lazy">
               </div>
             </div>
           </div>

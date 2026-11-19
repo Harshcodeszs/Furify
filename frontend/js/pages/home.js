@@ -13,6 +13,18 @@
   const root = document.documentElement;
 
   const hero = $(".hero");
+  function syncHeroVideoMotion(video, preference) {
+    if (preference.matches) {
+      video.pause();
+    } else if (video.paused) {
+      video.play().catch(() => {}); // Autoplay may be blocked by browser settings.
+    }
+  }
+  const heroVideo = $(".hero-video");
+  const videoMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  if (videoMotion.matches) syncHeroVideoMotion(heroVideo, videoMotion);
+  videoMotion.addEventListener("change", () => syncHeroVideoMotion(heroVideo, videoMotion));
+
   const stage = $("#dogStage");
   const tips = $(".tips-section");
   const nav = $(".navbar");
@@ -186,6 +198,7 @@
       ticking = false;
       hero.style.setProperty("--hp", clamp(scrollY / hero.offsetHeight, 0, 1).toFixed(3));
       stage.style.setProperty("--p", clamp((scrollY - topOf(stage)) / stage.offsetHeight, 0, 1).toFixed(3));
+      checkDogStage();
     });
   }
   addEventListener("scroll", onScroll, { passive: true });
@@ -223,7 +236,7 @@
     skipFlag = false;
     const id = ++runId;
 
-    try { await dogImg.decode(); } catch (e) { /* already loaded or failed: carry on */ }
+    try { await dogImg.decode(); } catch (e) { /* A failed image must not hide the section text. */ }
     while (busy) await wait(60);           // let the page glide finish first
     if (id !== runId) return;
 
@@ -262,11 +275,20 @@
     stage.classList.add("is-ready");        // "Scroll down"
   }
 
-  new IntersectionObserver(([e]) => {
-    if (e.intersectionRatio === 0) { resetIntro(); return; }
-    const needed = Math.min(stage.offsetHeight * 0.8, innerHeight * 0.7);
-    if (!introStarted && e.intersectionRect.height >= needed) startIntro();
-  }, { threshold: Array.from({ length: 21 }, (_, i) => i / 20) }).observe(stage);
+  function dogStageVisibility(rect, viewportHeight) {
+    if (rect.bottom <= 0 || rect.top >= viewportHeight) return "reset";
+    const visible = Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0);
+    return visible >= Math.min(rect.height, viewportHeight) * 0.25 ? "start" : "wait";
+  }
+
+  function checkDogStage() {
+    const visibility = dogStageVisibility(stage.getBoundingClientRect(), innerHeight);
+    if (visibility === "reset" && introStarted) resetIntro();
+    else if (visibility === "start" && !introStarted) startIntro();
+  }
+  addEventListener("load", checkDogStage);
+  addEventListener("resize", checkDogStage);
+  checkDogStage();
 
   /* Runs `cb` once, the first time `el` is really on screen (never again) */
   function onceInView(el, cb) {
@@ -351,11 +373,13 @@
     console.info("[furify lens] v3", { dogBox, lensBox });
     placeLens();
   }
-  Promise.all([howDog, lensImg].map((im) => im.decode().catch(() => {}))).then(measureAndPlace);
   new ResizeObserver(placeLens).observe(howDog);
   addEventListener("load", placeLens);
 
   onceInView(how, async () => {
+    // Decode below-the-fold assets only when this section is near use.
+    await Promise.all([howDog, lensImg].map((im) => im.decode().catch(() => {})));
+    measureAndPlace();
     if (reduce) { howStage.classList.add("dog-in", "lens-in"); return; }
     await idle();
     howStage.classList.add("dog-in");                              // dog: blur > sharp
