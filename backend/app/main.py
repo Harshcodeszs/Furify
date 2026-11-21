@@ -389,6 +389,21 @@ if os.path.exists(FRONTEND_DIR):
     def serve_index():
         return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
 
+    @app.get("/manifest.json")
+    def serve_manifest():
+        return FileResponse(
+            os.path.join(FRONTEND_DIR, "manifest.json"),
+            media_type="application/manifest+json",
+        )
+
+    @app.get("/sw.js")
+    def serve_service_worker():
+        return FileResponse(
+            os.path.join(FRONTEND_DIR, "sw.js"),
+            media_type="application/javascript",
+            headers={"Service-Worker-Allowed": "/", "Cache-Control": "no-cache"},
+        )
+
     # Serves /identifyfur.html, /about.html, /login.html, etc.
     @app.get("/{page_name}.html")
     def serve_page(page_name: str):

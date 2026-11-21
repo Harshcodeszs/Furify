@@ -1,0 +1,21 @@
+{
+  "name": "Furify",
+  "short_name": "Furify",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#b09a86",
+  "background_color": "#f8f4ee",
+  "icons": [
+    {
+      "src": "/assets/image/pwa-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/image/pwa-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
