@@ -3,6 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b09a86">
+  <link rel="manifest" href="/manifest.json">
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js").catch((error) => console.warn("Service worker registration failed:", error));
+      });
+    }
+  </script>
   <title>Furify | Log in or Sign up</title>
 
   <!-- Page-slide transitions: in <head>, NOT deferred -->
