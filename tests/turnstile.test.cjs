@@ -12,9 +12,10 @@ const start = source.indexOf("async function identifyPhoto(file)");
 const end = source.indexOf("/* ==========================================================", start);
 const requestFunction = source.slice(start, end);
 
-function setup(fetch, token = "fresh-token") {
+function setup(fetch, token = "fresh-token", guest = false) {
   const resets = [];
   const widget = {};
+  const stored = new Map();
   const context = vm.createContext({
     document: {
       querySelector: (selector) => selector === ".cf-turnstile" ? widget : { value: token },
@@ -23,8 +24,13 @@ function setup(fetch, token = "fresh-token") {
     FormData,
     scanSource: "Upload",
     supabase: { auth: { getSession: async () => ({
-      data: { session: { access_token: "offline-access-token" } },
+      data: { session: guest ? null : { access_token: "offline-access-token" } },
     }) } },
+    localStorage: {
+      getItem(key) { return stored.get(key) ?? null; },
+      setItem(key, value) { stored.set(key, value); },
+    },
+    crypto: { randomUUID: () => "test-guest-id" },
     fetch,
     MESSAGES: { notDog: "Not a dog", uncertain: "is uncertain" },
   });
@@ -77,4 +83,33 @@ test("missing token prevents the API request", async () => {
     return true;
   });
   assert.equal(requests, 0);
+  assert.deepEqual(page.resets, [page.widget]);
+});
+
+test("missing file is rejected before fetch and resets the widget", async () => {
+  let requests = 0;
+  const page = setup(async () => { requests++; });
+  await assert.rejects(page.identify(null), /photo|file/i);
+  assert.equal(requests, 0);
+  assert.deepEqual(page.resets, [page.widget]);
+});
+
+test("guest submission includes guest ID and fresh token, then resets", async () => {
+  let headers;
+  let submittedToken;
+  const page = setup(async (url, options) => {
+    headers = options.headers;
+    submittedToken = options.body.get("cf_turnstile_response");
+    return {
+      ok: true,
+      json: async () => ({
+        status: "ok", breed: "Beagle", info: "Breed info",
+        top3: [{ breed: "Beagle", confidence: 0.9 }],
+      }),
+    };
+  }, "fresh-guest-token", true);
+  await page.identify(new Blob(["photo"]));
+  assert.equal(headers["X-Guest-Device-ID"], "guest_test-guest-id");
+  assert.equal(submittedToken, "fresh-guest-token");
+  assert.deepEqual(page.resets, [page.widget]);
 });

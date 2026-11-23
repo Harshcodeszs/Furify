@@ -249,79 +249,77 @@
      IDENTIFY PHOTO (API Call)
      ========================================================== */
   async function identifyPhoto(file) {
-    const turnstileToken = document.querySelector('[name="cf-turnstile-response"]')?.value;
-
-    // Every prediction requires a fresh token verified by the backend.
-    if (!turnstileToken) {
-      const err = new Error("Please complete the Cloudflare security verification.");
-      err.code = "turnstile_missing";
-      throw err;
-    }
-
-    const form = new FormData();
-    form.append("file", file);
-    form.append("cf_turnstile_response", turnstileToken);
-    const headers = { "X-Scan-Source": scanSource };
-
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session && session.access_token) {
-        headers["Authorization"] = `Bearer ${session.access_token}`;
-      }
-    } catch (e) {
-      // treated as a guest
-    }
+      if (!file) throw new Error("Please choose a photo before identifying.");
+      const turnstileToken = document.querySelector('[name="cf-turnstile-response"]')?.value;
 
-    if (!headers["Authorization"]) {
-      let guestId = localStorage.getItem("furify_guest_id");
-      if (!guestId) {
-        guestId = "guest_" + crypto.randomUUID();
-        localStorage.setItem("furify_guest_id", guestId);
+      // Every prediction requires a fresh token verified by the backend.
+      if (!turnstileToken) {
+        const err = new Error("Please complete the Cloudflare security verification.");
+        err.code = "turnstile_missing";
+        throw err;
       }
-      headers["X-Guest-Device-ID"] = guestId;
-    }
 
-    let res;
-    try {
-      res = await fetch("/api/predict", { method: "POST", headers, body: form });
+      const form = new FormData();
+      form.append("file", file);
+      form.append("cf_turnstile_response", turnstileToken);
+      const headers = { "X-Scan-Source": scanSource };
+
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session && session.access_token) {
+          headers["Authorization"] = `Bearer ${session.access_token}`;
+        }
+      } catch (e) {
+        // treated as a guest
+      }
+
+      if (!headers["Authorization"]) {
+        let guestId = localStorage.getItem("furify_guest_id");
+        if (!guestId) {
+          guestId = "guest_" + crypto.randomUUID();
+          localStorage.setItem("furify_guest_id", guestId);
+        }
+        headers["X-Guest-Device-ID"] = guestId;
+      }
+
+      const res = await fetch("/api/predict", { method: "POST", headers, body: form });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        const error = new Error(err.detail || "Identification failed");
+        if (res.status === 403) error.code = "turnstile_missing";
+        throw error;
+      }
+      const data = await res.json();
+
+      if (data.status === "limit_reached") {
+        const e = new Error(data.message);
+        e.code = "limit";
+        throw e;
+      }
+      if (data.status === "not_dog") {
+        const e = new Error(MESSAGES.notDog);
+        e.code = "not_dog";
+        throw e;
+      }
+      if (data.status === "error") throw new Error(data.message);
+
+      const matches = data.top3.map((m) => ({
+        breed: m.breed,
+        percent: Math.round(m.confidence * 100),
+      }));
+
+      const reason = data.status === "uncertain"
+        ? `${data.breed} was the closest match, but the photo ${MESSAGES.uncertain}`
+        : (data.info ||
+           `${data.breed} was the strongest match based on the dog's coat, ear shape, facial features, and overall body shape.`);
+
+      return { matches, reason, status: data.status };
     } finally {
-      // Tokens are single-use; a failed request may also have consumed the token.
+      // Reset after every attempt, including validation errors before fetch.
       const widget = document.querySelector(".cf-turnstile");
-      if (window.turnstile && widget) {
-        window.turnstile.reset(widget);
-      }
+      if (window.turnstile && widget) window.turnstile.reset(widget);
     }
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      const error = new Error(err.detail || "Identification failed");
-      if (res.status === 403) error.code = "turnstile_missing";
-      throw error;
-    }
-    const data = await res.json();
-
-    if (data.status === "limit_reached") {
-      const e = new Error(data.message);
-      e.code = "limit";
-      throw e;
-    }
-    if (data.status === "not_dog") {
-      const e = new Error(MESSAGES.notDog);
-      e.code = "not_dog";
-      throw e;
-    }
-    if (data.status === "error") throw new Error(data.message);
-
-    const matches = data.top3.map((m) => ({
-      breed: m.breed,
-      percent: Math.round(m.confidence * 100),
-    }));
-
-    const reason = data.status === "uncertain"
-      ? `${data.breed} was the closest match, but the photo ${MESSAGES.uncertain}`
-      : (data.info ||
-         `${data.breed} was the strongest match based on the dog's coat, ear shape, facial features, and overall body shape.`);
-
-    return { matches, reason, status: data.status };
   }
 
   /* ==========================================================
@@ -346,8 +344,6 @@
   }
 
   identifyBtn.addEventListener("click", async () => {
-    if (!selectedFile) return;
-
     if (getFreeLeft() <= 0) {
       showLimit();
       return;
