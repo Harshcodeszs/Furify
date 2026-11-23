@@ -428,13 +428,13 @@
 
   /* ---------- Point 5: Friendly Error Mapping ---------- */
   function mapAuthError(msg) {
+    console.error("Supabase authentication error:", msg);
     if (!msg) return "An unexpected error occurred. Please try again.";
     const lower = msg.toLowerCase();
     if (lower.includes("invalid login credentials")) return "Incorrect email or password.";
     if (lower.includes("email not confirmed")) return "Please check your email and confirm your account first.";
     if (lower.includes("user already registered") || lower.includes("already registered")) return "An account with this email already exists.";
-    if (lower.includes("password should be at least")) return "Password must be at least 6 characters.";
-    return "Something went wrong. Please try again.";
+    return msg;
   }
 
   async function authRequest(mode, data) {
