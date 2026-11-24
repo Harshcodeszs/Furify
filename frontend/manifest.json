@@ -1,7 +1,7 @@
 {
   "name": "Furify",
   "short_name": "Furify",
-  "start_url": "/",
+  "start_url": "/identifyfur.html",
   "scope": "/",
   "display": "standalone",
   "theme_color": "#b09a86",
