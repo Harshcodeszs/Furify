@@ -1,8 +1,8 @@
-const CACHE_NAME = "furify-pages-v1";
+const CACHE_NAME = "furify-pages-v2";
 
 self.addEventListener("install", (event) => {
-  // Make the landing page available on the first offline launch.
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.add("/")).catch(() => {}));
+  // Make the scanner available on the first offline launch.
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.add("/identifyfur.html")).catch(() => {}));
 });
 
 self.addEventListener("fetch", (event) => {

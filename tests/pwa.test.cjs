@@ -52,12 +52,12 @@ function worker(network, write) {
   return { request, install, stored, calls };
 }
 
-test("first installation saves the landing page for an offline launch", async () => {
+test("first installation saves the scanner for an offline launch", async () => {
   let online = true;
   const app = worker(() => online ? Promise.resolve(new Response("home")) : Promise.reject(Error("offline")));
   await app.install();
   online = false;
-  assert.equal(await (await app.request("/")).text(), "home");
+  assert.equal(await (await app.request("/identifyfur.html")).text(), "home");
 });
 
 test("network-first refreshes an existing page and serves it offline", async () => {

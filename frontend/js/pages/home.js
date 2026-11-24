@@ -11,6 +11,7 @@
   const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const root = document.documentElement;
+  const installedApp = root.classList.contains("pwa-standalone");
 
   const hero = $(".hero");
   function syncHeroVideoMotion(video, preference) {
@@ -22,8 +23,11 @@
   }
   const heroVideo = $(".hero-video");
   const videoMotion = matchMedia("(prefers-reduced-motion: reduce)");
-  if (videoMotion.matches) syncHeroVideoMotion(heroVideo, videoMotion);
-  videoMotion.addEventListener("change", () => syncHeroVideoMotion(heroVideo, videoMotion));
+  if (installedApp) heroVideo.pause();
+  else {
+    if (videoMotion.matches) syncHeroVideoMotion(heroVideo, videoMotion);
+    videoMotion.addEventListener("change", () => syncHeroVideoMotion(heroVideo, videoMotion));
+  }
 
   const stage = $("#dogStage");
   const tips = $(".tips-section");
@@ -122,7 +126,7 @@
   // Mouse/trackpad get the glide + settle below instead (no tug-of-war = no stuck parts).
   const finePointer = () => matchMedia("(pointer: fine)").matches;
   function updateSnap() {
-    const cssSnap = !reduce && !finePointer() && pages.every(fits);
+    const cssSnap = !installedApp && !reduce && !finePointer() && pages.every(fits);
     root.classList.toggle("no-snap", busy || !cssSnap);
   }
   updateSnap();
@@ -150,6 +154,7 @@
   }
 
   addEventListener("wheel", (e) => {
+    if (installedApp) return;
     if (reduce || e.ctrlKey) return;
     if (introRunning) { e.preventDefault(); skipIntro(); return; }
     const now = performance.now();
@@ -165,6 +170,7 @@
   }, { passive: false });
 
   addEventListener("keydown", (e) => {
+    if (installedApp) return;
     if (busy && ["ArrowDown", "ArrowUp", "PageDown", "PageUp", " ", "Home", "End"].includes(e.key)) { e.preventDefault(); return; }
     if (introRunning && ["ArrowDown", "PageDown", " ", "End"].includes(e.key)) {
       e.preventDefault();
@@ -172,6 +178,7 @@
     }
   });
   addEventListener("touchmove", (e) => {
+    if (installedApp) return;
     if (introRunning) { e.preventDefault(); skipIntro(); }
   }, { passive: false });
 
@@ -181,7 +188,7 @@
   // ease to the nearest part so you never rest on the bottom of one and the top of the next.
   let settleT = 0;
   function settle() {
-    if (busy || introRunning || reduce || !finePointer()) return;
+    if (installedApp || busy || introRunning || reduce || !finePointer()) return;
     let best = 0, bd = Infinity;
     pages.forEach((p, i) => { const d = Math.abs(scrollY - pos(p)); if (d < bd) { bd = d; best = i; } });
     if (bd > 2 && bd < innerHeight * 0.5 && fits(pages[best])) goTo(pages[best], 650);
